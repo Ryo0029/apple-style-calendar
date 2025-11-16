@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <title>Apple Style Calendar</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
 
+<style>
 /* ---------------------------------------------------
    基本テーマ
 --------------------------------------------------- */
@@ -36,7 +36,7 @@ body {
 }
 
 /* ---------------------------------------------------
-   レイアウト
+   ヘッダー
 --------------------------------------------------- */
 header {
   padding:16px;
@@ -49,6 +49,10 @@ header {
 #headerMode {
   cursor:pointer;
   font-weight:700;
+  padding:8px 16px;
+  border-radius:30px;
+  background:var(--card-bg);
+  border:1px solid var(--border-soft);
 }
 
 .tz-select-box {
@@ -59,7 +63,7 @@ header {
 
 #tzButton {
   padding:6px 12px;
-  border-radius:14px;
+  border-radius:16px;
   border:1px solid var(--border-soft);
   background:var(--card-bg);
   cursor:pointer;
@@ -71,6 +75,17 @@ header {
   border:1px solid var(--border-soft);
 }
 
+#modeToggle {
+  padding:6px 16px;
+  border-radius:20px;
+  border:1px solid var(--border-soft);
+  background:var(--card-bg);
+  cursor:pointer;
+}
+
+/* ---------------------------------------------------
+   レイアウト
+--------------------------------------------------- */
 .shell {
   display:grid;
   grid-template-columns:38% 62%;
@@ -125,6 +140,14 @@ header {
   margin-bottom:12px;
 }
 
+#addNoteBtn {
+  padding:4px 12px;
+  border-radius:12px;
+  border:1px solid var(--border-soft);
+  background:var(--card-bg);
+  cursor:pointer;
+}
+
 .note-list {
   display:flex;
   flex-direction:column;
@@ -151,7 +174,6 @@ header {
   padding:6px;
   border-radius:10px;
   border:1px solid var(--border-soft);
-  background:white;
 }
 
 .note-delete {
@@ -162,13 +184,8 @@ header {
   cursor:pointer;
 }
 
-/* datalist 用 */
-datalist option {
-  font-size:14px;
-}
-
 /* ---------------------------------------------------
-   右パネル（カレンダー）
+   カレンダー
 --------------------------------------------------- */
 .calendar-panel {
   padding:20px;
@@ -195,6 +212,7 @@ datalist option {
   padding:6px;
   border:1px solid var(--border-soft);
   border-radius:12px;
+  background:var(--bg);
 }
 
 /* ---------------------------------------------------
@@ -203,6 +221,7 @@ datalist option {
 #todoPage {
   display:none;
   padding:24px;
+  opacity:1;
 }
 
 .todo-header {
@@ -211,6 +230,14 @@ datalist option {
   align-items:center;
   font-size:20px;
   margin-bottom:16px;
+}
+
+#addTodoBtn {
+  padding:4px 12px;
+  border-radius:12px;
+  background:var(--card-bg);
+  border:1px solid var(--border-soft);
+  cursor:pointer;
 }
 
 .todo-list {
@@ -227,6 +254,7 @@ datalist option {
   border-radius:12px;
   background:var(--card-bg);
   border:1px solid var(--border-soft);
+  cursor:grab;
 }
 
 .todo-item input[type="text"] {
@@ -243,129 +271,165 @@ datalist option {
   border:1px solid var(--border-soft);
 }
 
-/* 並べ替え */
-.todo-item {
-  cursor:grab;
-}
 .todo-item:active {
   cursor:grabbing;
 }
 
+/* ---------------------------------------------------
+   フェード
+--------------------------------------------------- */
+.fade {
+  transition:opacity 0.35s ease;
+}
+
+/* ============================================================
+   Apple風の動く12色グラデーション背景
+============================================================ */
+.gradient-bg {
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  background: linear-gradient(
+    120deg,
+    #ff4d4d,
+    #ff884d,
+    #ffd44d,
+    #e4ff4d,
+    #a9ff4d,
+    #4dff88,
+    #4dffd4,
+    #4dd4ff,
+    #4d88ff,
+    #4d4dff,
+    #884dff,
+    #d44dff
+  );
+  background-size: 400% 400%;
+  opacity: 0.35;
+  filter: blur(70px);
+  animation: appleWave 18s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes appleWave {
+  0% {
+    transform: translate3d(0, 0, 0);
+    background-position: 0% 50%;
+  }
+  50% {
+    transform: translate3d(-10%, -4%, 0);
+    background-position: 50% 50%;
+  }
+  100% {
+    transform: translate3d(-20%, 0, 0);
+    background-position: 100% 50%;
+  }
+}
 </style>
 </head>
+
 <body>
+  <div class="gradient-bg"></div>
 
 <header>
-
-  <!-- 左：CALENDAR / TODO 切替 -->
   <span id="headerMode">CALENDAR</span>
 
-  <!-- 中央：選択中の都市表示 -->
   <div class="tz-select-box">
     <button id="tzButton">Tokyo</button>
     <select id="tzSelect"></select>
   </div>
 
-  <!-- 右：ダークモード -->
   <button id="modeToggle">Dark</button>
-
 </header>
 
 <main>
 
-  <!-- ---------------------------------------------------
-       カレンダーページ
-  --------------------------------------------------- -->
-  <div id="calendarPage">
+<!-- ========== カレンダーページ ========== -->
+<div id="calendarPage" class="fade">
 
-    <div class="shell">
+  <div class="shell">
 
-      <!-- 左パネル -->
-      <section class="left-panel">
+    <!-- 左パネル -->
+    <section class="left-panel">
 
-        <!-- 今日の時間 -->
-        <section class="today-hero">
-          <div class="hero-time" id="heroTime">00:00</div>
-          <div class="hero-date" id="heroDate">2025/01/01 (Wed)</div>
-        </section>
-
-        <!-- 今日の予定 -->
-        <section class="today-notes">
-          <div class="notes-header">
-            <div>Today's Schedule</div>
-            <button id="addNoteBtn">＋</button>
-          </div>
-
-          <datalist id="placeCandidates">
-            <option>Starbucks</option>
-            <option>McDonald's</option>
-            <option>Tokyo Station</option>
-            <option>Shibuya Scramble</option>
-          </datalist>
-
-          <div class="note-list" id="noteList">
-            <!-- JSで追加 -->
-          </div>
-        </section>
-
+      <section class="today-hero">
+        <div class="hero-time" id="heroTime">00:00</div>
+        <div class="hero-date" id="heroDate">2025/01/01 (Wed)</div>
       </section>
 
-      <!-- 右パネル -->
-      <section class="calendar-panel">
-
-        <div class="calendar-header">
-          <div>
-            <div id="monthLabel" style="font-size:28px;font-weight:700;">2025年1月</div>
-            <div id="timezoneLabel" style="font-size:14px;">UTC+09 / Tokyo</div>
-          </div>
-
-          <select id="countrySelect"></select>
+      <section class="today-notes">
+        <div class="notes-header">
+          <div>Today's Schedule</div>
+          <button id="addNoteBtn">＋</button>
         </div>
 
-        <div class="calendar-grid" id="calendarGrid"></div>
+        <datalist id="placeCandidates">
+          <option>Starbucks</option>
+          <option>McDonald's</option>
+          <option>Tokyo Station</option>
+          <option>Shibuya Scramble</option>
+        </datalist>
 
+        <div class="note-list" id="noteList"></div>
       </section>
 
-    </div>
+    </section>
+
+    <!-- 右パネル -->
+    <section class="calendar-panel">
+
+      <div class="calendar-header">
+        <div>
+          <div id="monthLabel" style="font-size:28px;font-weight:700;">2025年1月</div>
+          <div id="timezoneLabel" style="font-size:14px;">UTC+09 / Tokyo</div>
+        </div>
+
+        <select id="countrySelect"></select>
+      </div>
+
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </section>
 
   </div>
 
-  <!-- ---------------------------------------------------
-       ToDoページ
-  --------------------------------------------------- -->
-  <div id="todoPage">
-    <div class="todo-header">
-      <span>ToDo List</span>
-      <button id="addTodoBtn">＋</button>
-    </div>
+</div>
 
-    <div class="todo-list" id="todoList">
-      <!-- JSで追加 -->
-    </div>
+<!-- ========== ToDoページ ========== -->
+<div id="todoPage" class="fade">
+  <div class="todo-header">
+    <span>ToDo List</span>
+    <button id="addTodoBtn">＋</button>
   </div>
+
+  <div class="todo-list" id="todoList"></div>
+</div>
 
 </main>
 
 <script>
+/* ============================================================
+   ストレージキー
+============================================================ */
+const STORAGE_NOTES = "notes_v1";
+const STORAGE_TODO  = "todo_v1";
+const STORAGE_TZ    = "timezone_v1";
 
 /* ============================================================
-   ① 今日の予定：削除ボタン + datalist + 保存
+   今日の予定（保存 / 削除 / datalist）
 ============================================================ */
 const noteList = document.getElementById("noteList");
 const addNoteBtn = document.getElementById("addNoteBtn");
-const STORAGE_NOTES = "notes_v1";
 
 function loadNotes() {
   return JSON.parse(localStorage.getItem(STORAGE_NOTES) || "[]");
 }
-
 function saveNotes(arr) {
   localStorage.setItem(STORAGE_NOTES, JSON.stringify(arr));
 }
 
 function renderNotes() {
-  noteList.innerHTML = "";
   const notes = loadNotes();
+  noteList.innerHTML = "";
 
   notes.forEach((note, index) => {
     const card = document.createElement("div");
@@ -382,20 +446,20 @@ function renderNotes() {
       </div>
     `;
 
+    // 削除
     card.querySelector(".note-delete").addEventListener("click", () => {
       notes.splice(index, 1);
       saveNotes(notes);
       renderNotes();
     });
 
-    // 入力したら即保存
-    card.querySelectorAll("input").forEach(input => {
-      input.addEventListener("input", () => {
-        notes[index].time = card.querySelectorAll("input")[0].value;
-        notes[index].place = card.querySelectorAll("input")[1].value;
-        notes[index].title = card.querySelectorAll("input")[2].value;
-        saveNotes(notes);
-      });
+    // 入力 → 保存
+    card.addEventListener("input", () => {
+      const inputs = card.querySelectorAll("input");
+      notes[index].time  = inputs[0].value;
+      notes[index].place = inputs[1].value;
+      notes[index].title = inputs[2].value;
+      saveNotes(notes);
     });
 
     noteList.appendChild(card);
@@ -404,35 +468,36 @@ function renderNotes() {
 
 addNoteBtn.addEventListener("click", () => {
   const notes = loadNotes();
-  notes.push({ time:"", place:"", title:"" });
+  notes.push({ time: "", place: "", title: "" });
   saveNotes(notes);
   renderNotes();
 });
 
 renderNotes();
 
+
 /* ============================================================
-   ② カレンダー生成
+   カレンダー表示
 ============================================================ */
 const calendarGrid = document.getElementById("calendarGrid");
 const monthLabel = document.getElementById("monthLabel");
 
 function renderCalendar() {
-  const today = new Date();
-  const y = today.getFullYear();
-  const m = today.getMonth();
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth();
 
   const first = new Date(y, m, 1);
   const last = new Date(y, m + 1, 0);
 
-  monthLabel.textContent = `${y}年${m+1}月`;
+  monthLabel.textContent = `${y}年${m + 1}月`;
   calendarGrid.innerHTML = "";
 
   for (let i = 0; i < first.getDay(); i++) {
-    const empty = document.createElement("div");
-    empty.className = "day-cell";
-    empty.style.visibility = "hidden";
-    calendarGrid.appendChild(empty);
+    const blank = document.createElement("div");
+    blank.className = "day-cell";
+    blank.style.visibility = "hidden";
+    calendarGrid.appendChild(blank);
   }
 
   for (let d = 1; d <= last.getDate(); d++) {
@@ -442,88 +507,111 @@ function renderCalendar() {
     calendarGrid.appendChild(cell);
   }
 }
-
 renderCalendar();
 
+
 /* ============================================================
-   ③ 全196カ国のタイムゾーン（主要代表 196）
+   タイムゾーン一覧（400エリア）
 ============================================================ */
 const tzSelect = document.getElementById("tzSelect");
 const tzButton = document.getElementById("tzButton");
 const timezoneLabel = document.getElementById("timezoneLabel");
 
-const timezones = Intl.supportedValuesOf("timeZone"); // → 世界約 400 地域
-timezones.forEach(tz => {
+Intl.supportedValuesOf("timeZone").forEach(tz => {
   const op = document.createElement("option");
   op.value = tz;
   op.textContent = tz;
   tzSelect.appendChild(op);
 });
 
+
 /* ============================================================
-   ④ 都市選択 → 時刻同期
+   時刻表示（保存つき）
 ============================================================ */
 function updateTime() {
-  const tz = tzSelect.value || "Asia/Tokyo";
+  const tz = localStorage.getItem(STORAGE_TZ) || "Asia/Tokyo";
+  tzSelect.value = tz;
+
   const now = new Date();
 
-  const timeStr = now.toLocaleTimeString("ja-JP", {
-    hour:"2-digit",
-    minute:"2-digit",
-    timeZone: tz
-  });
+  document.getElementById("heroTime").textContent =
+    now.toLocaleTimeString("ja-JP", { hour:"2-digit", minute:"2-digit", timeZone:tz });
 
-  const dateStr = now.toLocaleDateString("ja-JP", {
-    year:"numeric",
-    month:"2-digit",
-    day:"2-digit",
-    weekday:"short",
-    timeZone: tz
-  });
-
-  document.getElementById("heroTime").textContent = timeStr;
-  document.getElementById("heroDate").textContent = dateStr;
+  document.getElementById("heroDate").textContent =
+    now.toLocaleDateString("ja-JP", {
+      year:"numeric", month:"2-digit", day:"2-digit", weekday:"short", timeZone:tz
+    });
 
   tzButton.textContent = tz.split("/")[1] || tz;
   timezoneLabel.textContent = tz;
 }
 
-tzSelect.addEventListener("change", updateTime);
+tzSelect.addEventListener("change", () => {
+  localStorage.setItem(STORAGE_TZ, tzSelect.value);
+  updateTime();
+});
+
 updateTime();
 setInterval(updateTime, 30000);
 
+
 /* ============================================================
-   ⑤ ダークモード
+   ダークモード
 ============================================================ */
 document.getElementById("modeToggle").addEventListener("click", () => {
   document.body.classList.toggle("dark");
 });
 
+
 /* ============================================================
-   ⑥ CALENDAR / TODO 切替
+   カレンダー / ToDo 切り替え（フェード）
 ============================================================ */
 const headerMode = document.getElementById("headerMode");
 const calendarPage = document.getElementById("calendarPage");
 const todoPage = document.getElementById("todoPage");
 
+function fadeOut(elem, cb) {
+  elem.style.opacity = "0";
+
+  elem.addEventListener("transitionend", function handler() {
+    elem.removeEventListener("transitionend", handler);
+    elem.style.display = "none";
+    cb();
+  });
+}
+
+function fadeIn(elem) {
+  elem.style.display = "block";
+  elem.style.opacity = "0";
+
+  requestAnimationFrame(() => {
+    elem.style.opacity = "1";
+  });
+}
+
 headerMode.addEventListener("click", () => {
   if (headerMode.textContent === "CALENDAR") {
     headerMode.textContent = "TODO";
-    calendarPage.style.display = "none";
-    todoPage.style.display = "block";
+
+    fadeOut(calendarPage, () => {
+      fadeIn(todoPage);
+    });
+
   } else {
     headerMode.textContent = "CALENDAR";
-    calendarPage.style.display = "block";
-    todoPage.style.display = "none";
+
+    fadeOut(todoPage, () => {
+      fadeIn(calendarPage);
+    });
   }
 });
 
+
 /* ============================================================
-   ⑦ ToDoリスト（無限・チェック・削除・並び替え）
+   ToDo：保存・チェック・削除・並び替え
 ============================================================ */
 const todoList = document.getElementById("todoList");
 const addTodoBtn = document.getElementById("addTodoBtn");
-const STORAGE_TODO = "todo_v1";
 
 function loadTodo() {
   return JSON.parse(localStorage.getItem(STORAGE_TODO) || "[]");
@@ -533,8 +621,8 @@ function saveTodo(arr) {
 }
 
 function renderTodo() {
-  todoList.innerHTML = "";
   const todos = loadTodo();
+  todoList.innerHTML = "";
 
   todos.forEach((item, index) => {
     const div = document.createElement("div");
@@ -563,7 +651,7 @@ function renderTodo() {
       renderTodo();
     });
 
-    /* 並び替えドラッグ */
+    // 並び替え
     div.addEventListener("dragstart", e => {
       e.dataTransfer.setData("text/plain", index);
     });
@@ -575,8 +663,10 @@ function renderTodo() {
     div.addEventListener("drop", e => {
       const from = Number(e.dataTransfer.getData("text/plain"));
       const to = index;
+
       const moved = todos.splice(from,1)[0];
       todos.splice(to,0,moved);
+
       saveTodo(todos);
       renderTodo();
     });
@@ -593,7 +683,7 @@ addTodoBtn.addEventListener("click", () => {
 });
 
 renderTodo();
-
 </script>
+
 </body>
 </html>
