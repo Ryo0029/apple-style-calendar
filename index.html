@@ -34,9 +34,7 @@ body {
   transition:0.25s ease;
 }
 
-/* ---------------------------------------------------
-   背景グラデーション（Apple風12色）
---------------------------------------------------- */
+/* 背景グラデーション（Apple風12色） */
 .gradient-bg {
   position: fixed;
   inset: -20%;
@@ -69,9 +67,7 @@ body {
   100% { background-position: 100% 50%; }
 }
 
-/* ---------------------------------------------------
-   ヘッダー
---------------------------------------------------- */
+/* ヘッダー */
 header {
   padding:16px;
   display:flex;
@@ -90,14 +86,11 @@ header {
   cursor:pointer;
 }
 
-/* 今は CALENDAR/TODO の切替だけに使用 */
 #headerMode {
   min-width:100px;
 }
 
-/* ---------------------------------------------------
-   レイアウト
---------------------------------------------------- */
+/* レイアウト */
 .shell {
   display:grid;
   grid-template-columns:38% 62%;
@@ -105,9 +98,7 @@ header {
   padding:20px;
 }
 
-/* ---------------------------------------------------
-   左パネル：今日情報
---------------------------------------------------- */
+/* 左パネル：今日情報 */
 .left-panel {
   display:flex;
   flex-direction:column;
@@ -134,9 +125,7 @@ header {
   font-weight:600;
 }
 
-/* ---------------------------------------------------
-   今日の予定
---------------------------------------------------- */
+/* 今日の予定編集 */
 .today-notes {
   padding:20px;
   border-radius:20px;
@@ -180,7 +169,8 @@ header {
 }
 
 .note-row input[type="text"],
-.note-row input[type="color"] {
+.note-row input[type="color"],
+.note-row input[type="time"] {
   flex:1;
   padding:6px;
   border-radius:10px;
@@ -188,7 +178,6 @@ header {
   background:rgba(255,255,255,0.7);
 }
 
-/* 場所行の地図ボタン */
 .map-open {
   padding:6px 10px;
   border-radius:10px;
@@ -206,9 +195,7 @@ header {
   cursor:pointer;
 }
 
-/* ---------------------------------------------------
-   カレンダー（iOS風 月表示）
---------------------------------------------------- */
+/* 右：月カレンダー */
 .calendar-panel {
   padding:20px;
   border-radius:22px;
@@ -243,7 +230,6 @@ header {
   gap:6px;
 }
 
-/* 日セル */
 .day-cell {
   height:110px;
   padding:6px;
@@ -265,13 +251,11 @@ header {
   outline-offset:1px;
 }
 
-/* 日付番号 */
 .day-number {
   font-weight:700;
   margin-bottom:4px;
 }
 
-/* 予定行（最大3行） */
 .event-line {
   font-size:11px;
   padding:1px 4px;
@@ -283,16 +267,73 @@ header {
   color:white;
 }
 
-/* ---------------------------------------------------
-   ToDoページ（今は枠だけ・後で拡張可能）
---------------------------------------------------- */
+/* 日ビュー（タイムライン） */
+.day-view {
+  margin-top:14px;
+  border-radius:18px;
+  background:var(--card-bg);
+  border:1px solid var(--glass-border);
+  backdrop-filter: blur(24px);
+  padding:6px 10px 8px;
+  height:320px;
+  position:relative;
+  overflow:hidden;
+  font-size:11px;
+}
+
+.day-view-header {
+  font-weight:600;
+  margin-bottom:4px;
+}
+
+.day-hours {
+  position:absolute;
+  left:0;
+  top:24px;
+  bottom:4px;
+  width:20%;
+  border-right:1px solid rgba(0,0,0,0.15);
+}
+
+body.dark .day-hours {
+  border-right-color:rgba(255,255,255,0.18);
+}
+
+.day-hour-label {
+  position:absolute;
+  left:4px;
+  transform:translateY(-50%);
+  font-size:10px;
+  opacity:0.7;
+}
+
+.day-events-layer {
+  position:absolute;
+  left:21%;
+  right:4px;
+  top:24px;
+  bottom:4px;
+}
+
+.day-event-block {
+  position:absolute;
+  left:0;
+  right:0;
+  border-radius:8px;
+  padding:2px 4px;
+  color:#fff;
+  font-size:10px;
+  overflow:hidden;
+  box-shadow:0 4px 10px rgba(0,0,0,0.25);
+}
+
+/* ToDoページ（仮） */
 #todoPage {
   display:none;
   opacity:1;
   padding:20px;
 }
 
-/* フェード */
 .fade {
   transition:opacity 0.35s ease;
 }
@@ -313,7 +354,6 @@ header {
 
 <main>
 
-<!-- ========== カレンダーページ ========== -->
 <div id="calendarPage" class="fade">
   <div class="shell">
 
@@ -336,7 +376,7 @@ header {
 
     </section>
 
-    <!-- 右：月カレンダー -->
+    <!-- 右：月カレンダー＋日ビュー -->
     <section class="calendar-panel">
       <div class="calendar-header">
         <button class="nav-btn" id="prevMonth">←</button>
@@ -347,12 +387,17 @@ header {
       <button class="nav-btn" id="todayBtn">Today</button>
 
       <div class="calendar-grid" id="calendarGrid"></div>
+
+      <div class="day-view" id="dayView">
+        <div class="day-view-header" id="dayViewLabel">タイムライン</div>
+        <div class="day-hours" id="dayHours"></div>
+        <div class="day-events-layer" id="dayEventsLayer"></div>
+      </div>
     </section>
 
   </div>
 </div>
 
-<!-- ========== ToDoページ（仮） ========== -->
 <div id="todoPage" class="fade">
   <h2>ToDo List</h2>
   <p>ここはあとで iOS 風 ToDo に拡張できるスペース。</p>
@@ -361,9 +406,7 @@ header {
 </main>
 
 <script>
-/* ============================================================
-   イベント構造（Step1）
-============================================================ */
+/* イベント構造 */
 function createEvent() {
   return {
     id: crypto.randomUUID(),
@@ -372,8 +415,10 @@ function createEvent() {
     notes: "",
     color: "#3478F6",
     allDay: false,
-    start: "",   // "YYYY-MM-DD"
-    end: ""      // 今回は使わない（拡張用）
+    start: "",      // "YYYY-MM-DD"
+    end: "",        // 拡張用
+    startTime: "",  // "HH:MM"
+    endTime: ""     // "HH:MM"
   };
 }
 
@@ -385,16 +430,12 @@ function saveEvents(arr) {
   localStorage.setItem("events", JSON.stringify(arr));
 }
 
-/* ============================================================
-   カレンダー状態
-============================================================ */
+/* カレンダー状態 */
 let viewYear  = new Date().getFullYear();
-let viewMonth = new Date().getMonth();        // 0〜11
+let viewMonth = new Date().getMonth();              // 0〜11
 let selectedDate = new Date().toISOString().slice(0,10); // "YYYY-MM-DD"
 
-/* ============================================================
-   月カレンダー描画（1マス3行）
-============================================================ */
+/* 月カレンダー描画（1マス3行） */
 function renderCalendar() {
   const grid = document.getElementById("calendarGrid");
   const monthLabel = document.getElementById("monthLabel");
@@ -408,7 +449,6 @@ function renderCalendar() {
   const events = loadEvents();
   const todayStr = new Date().toISOString().slice(0,10);
 
-  // 前の月の空白
   for (let i = 0; i < first.getDay(); i++) {
     const blank = document.createElement("div");
     blank.className = "day-cell";
@@ -416,7 +456,6 @@ function renderCalendar() {
     grid.appendChild(blank);
   }
 
-  // 当月の日
   for (let d = 1; d <= last.getDate(); d++) {
     const dateStr = `${viewYear}-${String(viewMonth+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
     const dayEvents = events.filter(ev => ev.start === dateStr);
@@ -424,22 +463,19 @@ function renderCalendar() {
     const cell = document.createElement("div");
     cell.className = "day-cell";
 
-    // 今日枠
     if (dateStr === todayStr) {
       cell.classList.add("day-cell-today");
     }
-    // 選択中枠
+
     if (dateStr === selectedDate) {
       cell.classList.add("selected");
     }
 
-    // 日付番号
     const num = document.createElement("div");
     num.className = "day-number";
     num.textContent = d;
     cell.appendChild(num);
 
-    // 最大3行まで予定表示
     dayEvents.slice(0,3).forEach(ev => {
       const line = document.createElement("div");
       line.className = "event-line";
@@ -448,7 +484,6 @@ function renderCalendar() {
       cell.appendChild(line);
     });
 
-    // 4件以上ある場合は「+N件」
     if (dayEvents.length > 3) {
       const more = document.createElement("div");
       more.className = "event-line";
@@ -457,33 +492,109 @@ function renderCalendar() {
       cell.appendChild(more);
     }
 
-    // クリックで選択日変更
     cell.addEventListener("click", () => {
       selectedDate = dateStr;
       renderCalendar();
       renderSelectedDay();
+      renderDayView();
     });
 
     grid.appendChild(cell);
   }
 }
 
-/* ============================================================
-   左側：選択中の日の予定を表示・編集
-============================================================ */
+/* 時刻文字列 → 分 */
+function parseTimeToMinutes(t) {
+  if (!t) return null;
+  const parts = t.split(":");
+  if (parts.length !== 2) return null;
+  const h = Number(parts[0]);
+  const m = Number(parts[1]);
+  if (Number.isNaN(h) || Number.isNaN(m)) return null;
+  return h * 60 + m;
+}
+
+/* 日ビュー（タイムライン）描画 */
+function renderDayView() {
+  const label = document.getElementById("dayViewLabel");
+  const hoursLayer = document.getElementById("dayHours");
+  const eventsLayer = document.getElementById("dayEventsLayer");
+
+  label.textContent = `${selectedDate} のタイムライン`;
+  hoursLayer.innerHTML = "";
+  eventsLayer.innerHTML = "";
+
+  for (let h = 0; h < 24; h++) {
+    const lab = document.createElement("div");
+    lab.className = "day-hour-label";
+    lab.style.top = (h / 24 * 100) + "%";
+    lab.textContent = `${String(h).padStart(2,"0")}:00`;
+    hoursLayer.appendChild(lab);
+  }
+
+  const events = loadEvents().filter(ev => ev.start === selectedDate);
+
+  events.forEach(ev => {
+    let startMin = parseTimeToMinutes(ev.startTime);
+    let endMin   = parseTimeToMinutes(ev.endTime);
+
+    if (startMin == null && endMin == null) {
+      startMin = 9 * 60;
+      endMin   = 10 * 60;
+    } else if (startMin == null) {
+      startMin = Math.max(endMin - 60, 0);
+    } else if (endMin == null) {
+      endMin = startMin + 60;
+    }
+
+    if (endMin <= startMin) endMin = startMin + 30;
+
+    const top    = (startMin / 1440) * 100;
+    const height = Math.max((endMin - startMin) / 1440 * 100, 4);
+
+    const block = document.createElement("div");
+    block.className = "day-event-block";
+    block.style.top = top + "%";
+    block.style.height = height + "%";
+    block.style.background = ev.color || "#3478F6";
+
+    const timeLabel =
+      (ev.startTime || "") +
+      (ev.endTime ? (" - " + ev.endTime) : "");
+
+    block.textContent = `${timeLabel} ${ev.title || "(無題)"}`;
+    eventsLayer.appendChild(block);
+  });
+}
+
+/* 左側：選択日の予定を編集表示 */
 function renderSelectedDay() {
   const list = document.getElementById("noteList");
   const label = document.getElementById("selectedDateLabel");
   label.textContent = `${selectedDate} の予定`;
 
   const events = loadEvents().filter(ev => ev.start === selectedDate);
+
+  events.sort((a,b) => {
+    const am = parseTimeToMinutes(a.startTime) ?? 0;
+    const bm = parseTimeToMinutes(b.startTime) ?? 0;
+    return am - bm;
+  });
+
   list.innerHTML = "";
 
   events.forEach(ev => {
     const card = document.createElement("div");
     card.className = "note-card";
 
+    const sTime = ev.startTime || "";
+    const eTime = ev.endTime   || "";
+
     card.innerHTML = `
+      <div class="note-row">
+        <input type="time" value="${sTime}">
+        <input type="time" value="${eTime}">
+      </div>
       <div class="note-row">
         <input type="text" value="${ev.title}" placeholder="タイトル">
       </div>
@@ -497,31 +608,38 @@ function renderSelectedDay() {
       <button class="note-delete">削除</button>
     `;
 
-    const titleInput = card.querySelector("input[type='text']");
-    const colorInput = card.querySelector("input[type='color']");
+    const timeInputs = card.querySelectorAll("input[type='time']");
+    const titleInput = card.querySelectorAll("input[type='text']")[0];
     const placeInput = card.querySelectorAll("input[type='text']")[1];
+    const colorInput = card.querySelector("input[type='color']");
     const mapBtn     = card.querySelector(".map-open");
     const delBtn     = card.querySelector(".note-delete");
 
-    // タイトル編集 → 保存
+    timeInputs[0].addEventListener("input", e => {
+      ev.startTime = e.target.value;
+      saveUpdate(ev);
+    });
+
+    timeInputs[1].addEventListener("input", e => {
+      ev.endTime = e.target.value;
+      saveUpdate(ev);
+    });
+
     titleInput.addEventListener("input", e => {
       ev.title = e.target.value;
       saveUpdate(ev);
     });
 
-    // 色変更 → 保存
     colorInput.addEventListener("input", e => {
       ev.color = e.target.value;
       saveUpdate(ev);
     });
 
-    // 場所編集 → 保存
     placeInput.addEventListener("input", e => {
       ev.location.name = e.target.value;
       saveUpdate(ev);
     });
 
-    // 地図ボタン → Googleマップ検索
     mapBtn.addEventListener("click", () => {
       const q = ev.location.name.trim();
       if (!q) return;
@@ -529,7 +647,6 @@ function renderSelectedDay() {
       window.open(url, "_blank");
     });
 
-    // 削除
     delBtn.addEventListener("click", () => {
       removeEvent(ev.id);
     });
@@ -538,7 +655,7 @@ function renderSelectedDay() {
   });
 }
 
-/* イベント更新共通処理 */
+/* イベント更新 */
 function saveUpdate(ev) {
   const all = loadEvents();
   const idx = all.findIndex(x => x.id === ev.id);
@@ -546,31 +663,34 @@ function saveUpdate(ev) {
     all[idx] = ev;
     saveEvents(all);
     renderCalendar();
+    renderDayView();
   }
 }
 
-/* 削除処理 */
+/* 削除 */
 function removeEvent(id) {
   const all = loadEvents().filter(ev => ev.id !== id);
   saveEvents(all);
   renderSelectedDay();
   renderCalendar();
+  renderDayView();
 }
 
-/* 追加ボタン：選択中の日に1件追加 */
+/* 新規追加（選択日のイベント1件） */
 document.getElementById("addNoteBtn").addEventListener("click", () => {
   const ev = createEvent();
   ev.start = selectedDate;
+  ev.startTime = "09:00";
+  ev.endTime   = "10:00";
   const all = loadEvents();
   all.push(ev);
   saveEvents(all);
   renderSelectedDay();
   renderCalendar();
+  renderDayView();
 });
 
-/* ============================================================
-   月移動 / Today
-============================================================ */
+/* 月移動 / Today */
 document.getElementById("prevMonth").addEventListener("click", () => {
   viewMonth--;
   if (viewMonth < 0) {
@@ -596,20 +716,17 @@ document.getElementById("todayBtn").addEventListener("click", () => {
   selectedDate = now.toISOString().slice(0,10);
   renderCalendar();
   renderSelectedDay();
+  renderDayView();
 });
 
-/* ============================================================
-   ダークモード切替（テキストも更新）
-============================================================ */
+/* ダークモード切替 */
 const modeToggle = document.getElementById("modeToggle");
 modeToggle.addEventListener("click", () => {
   const isDark = document.body.classList.toggle("dark");
   modeToggle.textContent = isDark ? "Light" : "Dark";
 });
 
-/* ============================================================
-   CALENDAR / TODO 切り替え（フェード）
-============================================================ */
+/* CALENDAR / TODO 切り替え */
 const headerMode = document.getElementById("headerMode");
 const calendarPage = document.getElementById("calendarPage");
 const todoPage = document.getElementById("todoPage");
@@ -638,9 +755,7 @@ headerMode.addEventListener("click", () => {
   }
 });
 
-/* ============================================================
-   時刻表示（Tokyo固定・あとでタイムゾーンに拡張可）
-============================================================ */
+/* 時刻表示（Tokyo） */
 function updateNow() {
   const now = new Date();
   document.getElementById("heroTime").textContent =
@@ -653,13 +768,11 @@ function updateNow() {
 updateNow();
 setInterval(updateNow, 30000);
 
-/* ============================================================
-   初期描画
-============================================================ */
+/* 初期描画 */
 renderCalendar();
 renderSelectedDay();
+renderDayView();
 </script>
 
 </body>
 </html>
-
