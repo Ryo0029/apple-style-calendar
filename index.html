@@ -1124,4 +1124,27 @@ renderTodo();
 </script>
 
 </body>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyC4BMeBCBgr4HV52JRn31m3qkKy8OdqZ_c",
+    authDomain: "apple-calendar-clone.firebaseapp.com",
+    projectId: "apple-calendar-clone",
+    storageBucket: "apple-calendar-clone.firebasestorage.app",
+    messagingSenderId: "263484519350",
+    appId: "1:263484519350:web:cd5b22e8a5a5a32d1c0717",
+    measurementId: "G-FSX2TJV685"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 </html>
