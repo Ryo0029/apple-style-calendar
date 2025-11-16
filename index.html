@@ -181,36 +181,35 @@
       gap: 16px;
     }
 
-    .today-hero {
-      background: var(--card-bg);
-      border-radius: 24px;
-      padding: 24px 20px;
-      box-shadow: var(--shadow-soft);
-      border: 1px solid var(--border-soft);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-height: 180px;
-    }
+   .today-hero {
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 24px 20px;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 180px;
+}
 
-    .today-hero-main {
-      font-size: clamp(22px, 2.6vw, 28px);
-      font-weight: 600;
-      letter-spacing: -0.03em;
-    }
+.today-hero-main {
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
 
-    .today-hero-time {
-      margin-top: 8px;
-      font-size: 16px;
-    }
+.today-hero-time {
+  margin-top: 8px;
+  font-size: clamp(56px, 7vw, 80px);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
 
-    .today-hero-date-big {
-      margin-top: 12px;
-      font-size: clamp(42px, 5vw, 56px);
-      font-weight: 600;
-      letter-spacing: -0.04em;
-      text-align: center;
-    }
+.today-hero-date-big {
+  display: none;
+}
+
 
     .today-notes {
       background: var(--card-bg);
@@ -770,13 +769,20 @@
     }
 
     function updateNowHero() {
-      const now = new Date();
-      const w = weekdayNames[now.getDay()];
-      const m = monthNames[now.getMonth()];
-      todayHeroMain.textContent = `今日・${w}・${m}`;
-      todayHeroTime.textContent = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
-      todayHeroDateBig.textContent = `${now.getDate()}`;
-    }
+  const now = new Date();
+  const weekdaysEn = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const monthsEn = ["January","February","March","April","May","June","July",
+                    "August","September","October","November","December"];
+
+  const w = weekdaysEn[now.getDay()];
+  const m = monthsEn[now.getMonth()];
+  const d = now.getDate();
+
+  todayHeroMain.textContent = `${w} ${m} ${d}`;
+  todayHeroTime.textContent = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+  todayHeroDateBig.textContent = "";   // 使わないので空
+}
+
 
     loadNotesFromStorage();
     renderCalendar(currentYear, currentMonth);
