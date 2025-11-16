@@ -387,37 +387,47 @@
       text-align: center;
     }
 
-    .calendar-grid {
-      margin-top: 10px;
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 16px;
-      padding: 16px;
-      border: 1px solid var(--border-soft);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
-      backdrop-filter: blur(14px);
-    }
+.calendar-grid {
+  margin-top: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--border-soft);  /* ここを変更 */
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(14px);
+}
 
-    .calendar-days {
-      display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 8px;
-    }
+.day {
+  position: relative;
+  min-height: 70px;
+  border-radius: 16px;
+  background-color: var(--day-bg);
+  border: 1px solid var(--border-soft);  /* ここを変更 */
+  padding: 8px 8px 6px;
+  font-size: 13px;
+  color: var(--fg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  cursor: pointer;
+}
 
-    .day {
-      position: relative;
-      min-height: 70px;
-      border-radius: 16px;
-      background-color: var(--day-bg);
-      border: 1px solid rgba(0, 0, 0, 0.04);
-      padding: 8px 8px 6px;
-      font-size: 13px;
-      color: var(--fg);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
-      cursor: pointer;
-    }
+    body.dark .today-hero,
+body.dark .today-notes,
+body.dark .calendar-panel {
+  background: #111118;
+}
+
+body.dark .calendar-grid {
+  background-color: #111118;
+  border-color: var(--border-soft);
+}
+
+body.dark .day {
+  background-color: #181820;
+}
+
 
     body.dark .day {
       border-color: rgba(255, 255, 255, 0.06);
