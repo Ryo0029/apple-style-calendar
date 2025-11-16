@@ -190,6 +190,8 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: center;  
+  text-align: center;   
   min-height: 180px;
 }
 
@@ -197,6 +199,7 @@
   font-size: 18px;
   font-weight: 400;
   letter-spacing: -0.02em;
+  text-align: center;
 }
 
 .today-hero-time {
@@ -204,6 +207,7 @@
   font-size: clamp(56px, 7vw, 80px);
   font-weight: 600;
   letter-spacing: 0.08em;
+  text-align: center;
 }
 
 .today-hero-date-big {
@@ -234,6 +238,29 @@
       font-size: 15px;
       font-weight: 500;
     }
+
+    .today-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.note-textarea {
+  margin-top: 0;
+  width: 100%;
+  min-height: 40px;      /* 1つの予定が1〜2行で収まる高さ */
+  resize: vertical;
+  overflow-y: auto;
+  border-radius: 14px;
+  border: 1px solid var(--border-soft);
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 13px;
+  background-color: var(--note-bg);
+  color: var(--fg);
+  outline: none;
+}
+
 
     .add-note-button {
       width: 28px;
@@ -484,12 +511,33 @@
             <button class="add-note-button" id="addNoteBtn" type="button">＋</button>
           </div>
           <div class="today-notes-info" id="noteDateLabel"></div>
-          <textarea
-            id="noteTextarea"
-            class="note-textarea"
-            placeholder="ここに予定やメモを書きます。4行分が見える高さで、スクロールできます。"
-            disabled
-          ></textarea>
+            <div class="today-card-list">
+    <textarea
+      class="note-textarea"
+      data-slot="0"
+      placeholder="予定1"
+      disabled
+    ></textarea>
+    <textarea
+      class="note-textarea"
+      data-slot="1"
+      placeholder="予定2"
+      disabled
+    ></textarea>
+    <textarea
+      class="note-textarea"
+      data-slot="2"
+      placeholder="予定3"
+      disabled
+    ></textarea>
+    <textarea
+      class="note-textarea"
+      data-slot="3"
+      placeholder="予定4"
+      disabled
+    ></textarea>
+  </div>
+
           <div class="today-notes-info" id="noteEmptyLabel">
             まだ日付が選ばれていません。
           </div>
@@ -542,9 +590,10 @@
     const todayBtn = document.getElementById("todayBtn");
 
     const noteTitle = document.getElementById("noteTitle");
-    const noteDateLabel = document.getElementById("noteDateLabel");
-    const noteTextarea = document.getElementById("noteTextarea");
-    const noteEmptyLabel = document.getElementById("noteEmptyLabel");
+const noteDateLabel = document.getElementById("noteDateLabel");
+const noteEmptyLabel = document.getElementById("noteEmptyLabel");
+const noteTextareas = Array.from(document.querySelectorAll(".note-textarea"));
+
 
     const todayHeroMain = document.getElementById("todayHeroMain");
     const todayHeroTime = document.getElementById("todayHeroTime");
@@ -614,10 +663,17 @@
 
       noteTitle.textContent = "この日の予定";
       noteDateLabel.textContent = formatDateLabel(dateObj);
-      noteTextarea.disabled = false;
-      noteTextarea.value = notes[selectedKey] || "";
-      noteEmptyLabel.textContent =
-        noteTextarea.value.trim() ? "入力済みの予定があります。" : "ここに予定を書き込めます。";
+      noteTextareas.forEach((ta, idx) => {
+  const cardKey = selectedKey + "|" + idx;
+  ta.disabled = false;
+  ta.value = notes[cardKey] || "";
+});
+
+const anyFilled = noteTextareas.some(ta => ta.value.trim());
+noteEmptyLabel.textContent = anyFilled
+  ? "入力済みの予定があります。"
+  : "ここに予定を書き込めます。";
+
 
       const dayCells = calendarDays.querySelectorAll(".day");
       dayCells.forEach(cell => {
@@ -636,15 +692,23 @@
         const dot = cell.querySelector(".day-note-dot");
         if (!key || !preview || !dot) return;
 
-        const text = notes[key] || "";
-        if (text.trim()) {
-          const firstLines = text.split("\n").slice(0, 3).join(" ").trim();
-          preview.textContent = firstLines;
-          dot.style.visibility = "visible";
-        } else {
-          preview.textContent = "";
-          dot.style.visibility = "hidden";
-        }
+        let parts = [];
+for (let i = 0; i < 4; i++) {
+  const t = notes[key + "|" + i];
+  if (t && t.trim()) {
+    parts.push(t.split("\n")[0].trim());  // 各スロットの1行目だけ
+  }
+}
+
+if (parts.length) {
+  const combined = parts.slice(0, 3).join(" / ");  // 最大3本をつなげる
+  preview.textContent = combined;
+  dot.style.visibility = "visible";
+} else {
+  preview.textContent = "";
+  dot.style.visibility = "hidden";
+}
+
       });
     }
 
@@ -712,23 +776,37 @@
       updateDayPreviews();
     }
 
-    noteTextarea.addEventListener("input", () => {
-      if (!selectedKey) return;
-      const value = noteTextarea.value;
-      notes[selectedKey] = value;
-      saveNotesToStorage();
-      noteEmptyLabel.textContent = value.trim()
-        ? "入力済みの予定があります。"
-        : "ここに予定を書き込めます。";
-      updateDayPreviews();
-    });
+    noteTextareas.forEach((ta, idx) => {
+  ta.addEventListener("input", () => {
+    if (!selectedKey) return;
+
+    const cardKey = selectedKey + "|" + idx;
+    const value = ta.value;
+
+    if (value.trim()) {
+      notes[cardKey] = value;
+    } else {
+      delete notes[cardKey];
+    }
+
+    const anyFilled = noteTextareas.some(t => t.value.trim());
+    noteEmptyLabel.textContent = anyFilled
+      ? "入力済みの予定があります。"
+      : "ここに予定を書き込めます。";
+
+    saveNotesToStorage();
+    updateDayPreviews();
+  });
+});
 
     addNoteBtn.addEventListener("click", () => {
-      if (noteTextarea.disabled) return;
-      noteTextarea.focus();
-      const len = noteTextarea.value.length;
-      noteTextarea.setSelectionRange(len, len);
-    });
+  const first = noteTextareas[0];
+  if (!first || first.disabled) return;
+  first.focus();
+  const len = first.value.length;
+  first.setSelectionRange(len, len);
+});
+
 
     prevBtn.addEventListener("click", () => {
       currentMonth--;
