@@ -212,21 +212,6 @@ body.dark #tzSelect {
   gap:24px;
 }
 
-/* ガラスカード共通 */
-.glass-card-base {
-  border-radius:24px;
-  background:var(--card-glass-light);
-  border:1px solid var(--border-soft-light);
-  box-shadow:var(--shadow-soft);
-  backdrop-filter:blur(26px);
-  -webkit-backdrop-filter:blur(26px);
-}
-
-body.dark .glass-card-base {
-  background:var(--card-glass-dark);
-  border-color:var(--border-soft-dark);
-}
-
 /* 今日の時刻カード */
 .today-hero {
   padding:32px;
@@ -474,7 +459,7 @@ body.dark .cal-nav-btn {
   gap:8px;
 }
 
-/* 日セル */
+/* 日セル：3行表示対応 */
 .day-cell {
   height:90px;
   padding:6px 8px;
@@ -486,13 +471,36 @@ body.dark .cal-nav-btn {
   box-shadow:0 10px 24px rgba(0,0,0,0.18);
   font-size:14px;
   display:flex;
-  align-items:flex-start;
-  justify-content:flex-end;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:stretch;
 }
 
 body.dark .day-cell {
   border-color:rgba(255,255,255,0.18);
   background:rgba(15,15,30,0.9);
+}
+
+/* 上段：日付番号 */
+.day-number-row {
+  width:100%;
+  display:flex;
+  justify-content:flex-end;
+  font-size:12px;
+  margin-bottom:4px;
+  opacity:0.9;
+}
+
+.day-number {
+  font-weight:600;
+}
+
+/* 下段：予定プレビュー（最大3行） */
+.day-preview {
+  font-size:11px;
+  line-height:1.2;
+  white-space:pre-line;
+  overflow:hidden;
 }
 
 /* 今日 */
@@ -697,7 +705,7 @@ body.dark .todo-delete {
 /* ============================================================
    ストレージキー
 ============================================================ */
-const STORAGE_NOTES = "notes_v1";   // 中身は日付ごとのオブジェクトに変更
+const STORAGE_NOTES = "notes_v1";   // 日付ごとのオブジェクト
 const STORAGE_TODO  = "todo_v1";
 const STORAGE_TZ    = "timezone_v1";
 
@@ -732,7 +740,6 @@ let currentMonth = todayDate.getMonth(); // 0-11
 
 /* ============================================================
    今日の予定（保存 / 削除 / Googleマップ連携）
-   ※ 日付ごとに保存
 ============================================================ */
 const noteList = document.getElementById("noteList");
 const addNoteBtn = document.getElementById("addNoteBtn");
@@ -801,6 +808,7 @@ function renderNotes() {
       updated[index].title = titleInput.value;
       updated[index].place = placeInput.value;
       saveNotesFor(selectedDateKey, updated);
+      renderCalendar();  // カレンダーの3行プレビュー更新
     }
 
     [timeInput, titleInput, placeInput].forEach(input => {
@@ -819,7 +827,7 @@ function renderNotes() {
       updated.splice(index, 1);
       saveNotesFor(selectedDateKey, updated);
       renderNotes();
-      renderCalendar(); // ドットなどを付けたい場合ここで反映
+      renderCalendar();
     });
 
     noteList.appendChild(card);
@@ -834,6 +842,7 @@ addNoteBtn.addEventListener("click", () => {
   notes.push({ time:"", place:"", title:"" });
   saveNotesFor(selectedDateKey, notes);
   renderNotes();
+  renderCalendar();
 });
 
 /* ============================================================
@@ -854,6 +863,7 @@ function renderCalendar() {
 
   const todayKey = dateToKey(todayDate);
 
+  // 先頭の空白
   for (let i = 0; i < first.getDay(); i++) {
     const blank = document.createElement("div");
     blank.className = "day-cell";
@@ -861,13 +871,13 @@ function renderCalendar() {
     calendarGrid.appendChild(blank);
   }
 
+  // 各日
   for (let d = 1; d <= last.getDate(); d++) {
     const cellDate = new Date(currentYear, currentMonth, d);
     const cellKey  = dateToKey(cellDate);
 
     const cell = document.createElement("div");
     cell.className = "day-cell";
-    cell.textContent = d;
     cell.dataset.dateKey = cellKey;
 
     if (cellKey === todayKey) {
@@ -877,10 +887,36 @@ function renderCalendar() {
       cell.classList.add("selected");
     }
 
+    // 上段：日付
+    const header = document.createElement("div");
+    header.className = "day-number-row";
+    header.innerHTML = `<span class="day-number">${d}</span>`;
+
+    // 下段：予定3行まで
+    const preview = document.createElement("div");
+    preview.className = "day-preview";
+
+    const notes = loadNotesFor(cellKey);
+    const lines = [];
+    notes.forEach(n => {
+      if (!n) return;
+      const parts = [];
+      if (n.time)  parts.push(n.time);
+      if (n.title) parts.push(n.title);
+      else if (n.place) parts.push(n.place);
+      const line = parts.join(" ");
+      if (line.trim()) lines.push(line);
+    });
+    if (lines.length > 3) lines.length = 3;  // 最大3行
+    preview.textContent = lines.join("\n");
+
+    cell.appendChild(header);
+    cell.appendChild(preview);
+
     cell.addEventListener("click", () => {
       selectedDateKey = cellKey;
       renderNotes();
-      renderCalendar(); // 再描画して selected クラス更新
+      renderCalendar();
     });
 
     calendarGrid.appendChild(cell);
@@ -890,7 +926,7 @@ function renderCalendar() {
 /* 月移動：C仕様（選択中の日の「日」番号を維持） */
 function moveMonth(offset) {
   const d = keyToDate(selectedDateKey);
-  d.setMonth(d.getMonth() + offset); // JSが自動で末日調整
+  d.setMonth(d.getMonth() + offset);
   selectedDateKey = dateToKey(d);
   currentYear  = d.getFullYear();
   currentMonth = d.getMonth();
