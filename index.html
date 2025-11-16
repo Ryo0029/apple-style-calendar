@@ -243,6 +243,87 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-top: 6px;
+}
+
+.schedule-card {
+  background: var(--note-bg);
+  border-radius: 14px;
+  border: 1px solid var(--border-soft);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.schedule-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.schedule-time {
+  width: 80px;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid var(--border-soft);
+  background: #ffffff;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.schedule-title {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border-soft);
+  background: #ffffff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;  /* 太字タイトル */
+}
+
+.schedule-place {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border-soft);
+  background: #ffffff;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.schedule-map-button {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-soft);
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+body.dark .schedule-card {
+  background: #181820;
+}
+
+body.dark .schedule-time,
+body.dark .schedule-title,
+body.dark .schedule-place {
+  background: #111118;
+  color: var(--fg);
+  border-color: var(--border-soft);
+}
+
+body.dark .schedule-map-button {
+  background: #111118;
+}
+
+
+    .today-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .note-textarea {
@@ -516,43 +597,63 @@ body.dark .day {
         </section>
 
         <section class="today-notes">
-          <div class="today-notes-header">
-            <div class="today-notes-title" id="noteTitle">この日の予定</div>
-            <button class="add-note-button" id="addNoteBtn" type="button">＋</button>
-          </div>
-          <div class="today-notes-info" id="noteDateLabel"></div>
-            <div class="today-card-list">
-    <textarea
-      class="note-textarea"
-      data-slot="0"
-      placeholder="予定1"
-      disabled
-    ></textarea>
-    <textarea
-      class="note-textarea"
-      data-slot="1"
-      placeholder="予定2"
-      disabled
-    ></textarea>
-    <textarea
-      class="note-textarea"
-      data-slot="2"
-      placeholder="予定3"
-      disabled
-    ></textarea>
-    <textarea
-      class="note-textarea"
-      data-slot="3"
-      placeholder="予定4"
-      disabled
-    ></textarea>
+  <div class="today-notes-header">
+    <div class="today-notes-title" id="noteTitle">この日の予定</div>
+    <button class="add-note-button" id="addNoteBtn" type="button">＋</button>
+  </div>
+  <div class="today-notes-info" id="noteDateLabel"></div>
+
+  <div class="today-card-list">
+    <div class="schedule-card" data-slot="0">
+      <div class="schedule-row">
+        <input type="time" class="schedule-time" />
+        <input type="text" class="schedule-title" placeholder="タイトル" />
+      </div>
+      <div class="schedule-row">
+        <input type="text" class="schedule-place" placeholder="場所" />
+        <button type="button" class="schedule-map-button">地図</button>
+      </div>
+    </div>
+
+    <div class="schedule-card" data-slot="1">
+      <div class="schedule-row">
+        <input type="time" class="schedule-time" />
+        <input type="text" class="schedule-title" placeholder="タイトル" />
+      </div>
+      <div class="schedule-row">
+        <input type="text" class="schedule-place" placeholder="場所" />
+        <button type="button" class="schedule-map-button">地図</button>
+      </div>
+    </div>
+
+    <div class="schedule-card" data-slot="2">
+      <div class="schedule-row">
+        <input type="time" class="schedule-time" />
+        <input type="text" class="schedule-title" placeholder="タイトル" />
+      </div>
+      <div class="schedule-row">
+        <input type="text" class="schedule-place" placeholder="場所" />
+        <button type="button" class="schedule-map-button">地図</button>
+      </div>
+    </div>
+
+    <div class="schedule-card" data-slot="3">
+      <div class="schedule-row">
+        <input type="time" class="schedule-time" />
+        <input type="text" class="schedule-title" placeholder="タイトル" />
+      </div>
+      <div class="schedule-row">
+        <input type="text" class="schedule-place" placeholder="場所" />
+        <button type="button" class="schedule-map-button">地図</button>
+      </div>
+    </div>
   </div>
 
-          <div class="today-notes-info" id="noteEmptyLabel">
-            まだ日付が選ばれていません。
-          </div>
-        </section>
-      </section>
+  <div class="today-notes-info" id="noteEmptyLabel">
+    ここに予定を登録できます。
+  </div>
+</section>
+
 
       <!-- 右：月カレンダー -->
       <section class="calendar-panel">
@@ -591,292 +692,364 @@ body.dark .day {
   </main>
 
   <script>
-    const monthLabel = document.getElementById("monthLabel");
-    const todayLabel = document.getElementById("todayLabel");
-    const calendarDays = document.getElementById("calendarDays");
+  const monthLabel = document.getElementById("monthLabel");
+  const todayLabel = document.getElementById("todayLabel");
+  const calendarDays = document.getElementById("calendarDays");
 
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const todayBtn = document.getElementById("todayBtn");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const todayBtn = document.getElementById("todayBtn");
 
-    const noteTitle = document.getElementById("noteTitle");
-const noteDateLabel = document.getElementById("noteDateLabel");
-const noteEmptyLabel = document.getElementById("noteEmptyLabel");
-const noteTextareas = Array.from(document.querySelectorAll(".note-textarea"));
+  const noteTitle = document.getElementById("noteTitle");
+  const noteDateLabel = document.getElementById("noteDateLabel");
+  const noteEmptyLabel = document.getElementById("noteEmptyLabel");
 
+  const todayHeroMain = document.getElementById("todayHeroMain");
+  const todayHeroTime = document.getElementById("todayHeroTime");
+  const todayHeroDateBig = document.getElementById("todayHeroDateBig");
+  const addNoteBtn = document.getElementById("addNoteBtn");
 
-    const todayHeroMain = document.getElementById("todayHeroMain");
-    const todayHeroTime = document.getElementById("todayHeroTime");
-    const todayHeroDateBig = document.getElementById("todayHeroDateBig");
-    const addNoteBtn = document.getElementById("addNoteBtn");
+  const modeToggle = document.getElementById("modeToggle");
+  const lightLabel = document.getElementById("lightLabel");
+  const darkLabel = document.getElementById("darkLabel");
 
-    const modeToggle = document.getElementById("modeToggle");
-    const lightLabel = document.getElementById("lightLabel");
-    const darkLabel = document.getElementById("darkLabel");
+  const scheduleCards = Array.from(document.querySelectorAll(".schedule-card"));
 
-    const today = new Date();
-    let currentYear = today.getFullYear();
-    let currentMonth = today.getMonth();
-
-    const notes = {};
-    let selectedKey = null;
-    const STORAGE_KEY = "calendar_notes_v1";
-
-    const monthNames = [
-      "1月","2月","3月","4月","5月","6月",
-      "7月","8月","9月","10月","11月","12月"
-    ];
-    const weekdayNames = ["日","月","火","水","木","金","土"];
-
-    function pad2(n) {
-      return String(n).padStart(2, "0");
-    }
-
-    function formatDateLabel(date) {
-      const y = date.getFullYear();
-      const m = date.getMonth() + 1;
-      const d = date.getDate();
-      const w = weekdayNames[date.getDay()];
-      return y + "年" + m + "月" + d + "日（" + w + "）";
-    }
-
-    function makeKey(y, m, d) {
-      const mm = String(m + 1).padStart(2, "0");
-      const dd = String(d).padStart(2, "0");
-      return y + "-" + mm + "-" + dd;
-    }
-
-    function loadNotesFromStorage() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return;
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === "object") {
-          Object.assign(notes, parsed);
-        }
-      } catch (e) {
-        console.warn("load error", e);
-      }
-    }
-
-    function saveNotesToStorage() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
-      } catch (e) {
-        console.warn("save error", e);
-      }
-    }
-
-    function openDay(y, m, d) {
-      const dateObj = new Date(y, m, d);
-      selectedKey = makeKey(y, m, d);
-
-      noteTitle.textContent = "この日の予定";
-      noteDateLabel.textContent = formatDateLabel(dateObj);
-      noteTextareas.forEach((ta, idx) => {
-  const cardKey = selectedKey + "|" + idx;
-  ta.disabled = false;
-  ta.value = notes[cardKey] || "";
+addNoteBtn.addEventListener("click", () => {
+  const firstCard = scheduleCards[0];
+  if (!firstCard) return;
+  const titleInput = firstCard.querySelector(".schedule-title");
+  if (!titleInput || titleInput.disabled) return;
+  titleInput.focus();
+  const len = titleInput.value.length;
+  titleInput.setSelectionRange(len, len);
 });
 
-const anyFilled = noteTextareas.some(ta => ta.value.trim());
-noteEmptyLabel.textContent = anyFilled
-  ? "入力済みの予定があります。"
-  : "ここに予定を書き込めます。";
 
+  const today = new Date();
+  let currentYear = today.getFullYear();
+  let currentMonth = today.getMonth();
 
-      const dayCells = calendarDays.querySelectorAll(".day");
-      dayCells.forEach(cell => {
-        cell.classList.remove("selected");
-        if (cell.dataset.key === selectedKey) {
-          cell.classList.add("selected");
-        }
-      });
-    }
+  const notes = {};              // key: "YYYY-MM-DD" → 配列[{time,title,place}, …]
+  let selectedKey = null;
+  const STORAGE_KEY = "calendar_slots_v1";
 
-    function updateDayPreviews() {
-      const dayCells = calendarDays.querySelectorAll(".day");
-      dayCells.forEach(cell => {
-        const key = cell.dataset.key;
-        const preview = cell.querySelector(".day-content-preview");
-        const dot = cell.querySelector(".day-note-dot");
-        if (!key || !preview || !dot) return;
+  const monthNames = [
+    "1月","2月","3月","4月","5月","6月",
+    "7月","8月","9月","10月","11月","12月"
+  ];
+  const weekdayNames = ["日","月","火","水","木","金","土"];
 
-        let parts = [];
-for (let i = 0; i < 4; i++) {
-  const t = notes[key + "|" + i];
-  if (t && t.trim()) {
-    parts.push(t.split("\n")[0].trim());  // 各スロットの1行目だけ
+  function pad2(n) {
+    return String(n).padStart(2, "0");
   }
-}
 
-if (parts.length) {
-  const combined = parts.slice(0, 3).join(" / ");  // 最大3本をつなげる
-  preview.textContent = combined;
-  dot.style.visibility = "visible";
-} else {
-  preview.textContent = "";
-  dot.style.visibility = "hidden";
-}
+  function formatDateLabel(date) {
+    const y = date.getFullYear();
+    const m = date.getMonth() + 1;
+    const d = date.getDate();
+    const w = weekdayNames[date.getDay()];
+    return y + "年" + m + "月" + d + "日（" + w + "）";
+  }
 
-      });
-    }
+  function makeKey(y, m, d) {
+    const mm = String(m + 1).padStart(2, "0");
+    const dd = String(d).padStart(2, "0");
+    return y + "-" + mm + "-" + dd;
+  }
 
-    function renderCalendar(year, month) {
-      const firstDay = new Date(year, month, 1);
-      const startWeekday = firstDay.getDay();
-      const lastDay = new Date(year, month + 1, 0);
-      const daysInMonth = lastDay.getDate();
-
-      monthLabel.textContent = year + "年 " + monthNames[month];
-      todayLabel.textContent = "今日: " + formatDateLabel(today);
-
-      calendarDays.innerHTML = "";
-
-      for (let i = 0; i < startWeekday; i++) {
-        const emptyCell = document.createElement("div");
-        emptyCell.className = "day empty";
-        calendarDays.appendChild(emptyCell);
+  function loadNotesFromStorage() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") {
+        Object.assign(notes, parsed);
       }
-
-      for (let d = 1; d <= daysInMonth; d++) {
-        const cellDate = new Date(year, month, d);
-        const isToday =
-          cellDate.getFullYear() === today.getFullYear() &&
-          cellDate.getMonth() === today.getMonth() &&
-          cellDate.getDate() === today.getDate();
-
-        const dayCell = document.createElement("div");
-        dayCell.className = "day" + (isToday ? " today" : "");
-        const key = makeKey(year, month, d);
-        dayCell.dataset.key = key;
-
-        const numberRow = document.createElement("div");
-        numberRow.className = "day-number-row";
-
-        const num = document.createElement("div");
-        num.className = "day-number";
-        num.textContent = d;
-
-        const tag = document.createElement("div");
-        tag.className = "day-tag";
-        tag.textContent = isToday ? "今日" : "";
-
-        numberRow.appendChild(num);
-        numberRow.appendChild(tag);
-
-        const dot = document.createElement("div");
-        dot.className = "day-note-dot";
-        dot.style.visibility = "hidden";
-
-        const preview = document.createElement("div");
-        preview.className = "day-content-preview";
-
-        dayCell.appendChild(numberRow);
-        dayCell.appendChild(preview);
-        dayCell.appendChild(dot);
-
-        dayCell.addEventListener("click", () => {
-          openDay(year, month, d);
-        });
-
-        calendarDays.appendChild(dayCell);
-      }
-
-      updateDayPreviews();
+    } catch (e) {
+      console.warn("load error", e);
     }
+  }
 
-    noteTextareas.forEach((ta, idx) => {
-  ta.addEventListener("input", () => {
-    if (!selectedKey) return;
-
-    const cardKey = selectedKey + "|" + idx;
-    const value = ta.value;
-
-    if (value.trim()) {
-      notes[cardKey] = value;
-    } else {
-      delete notes[cardKey];
+  function saveNotesToStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    } catch (e) {
+      console.warn("save error", e);
     }
+  }
 
-    const anyFilled = noteTextareas.some(t => t.value.trim());
+  function getDayArray(key) {
+    const arr = notes[key];
+    return Array.isArray(arr) ? arr : [];
+  }
+
+  function applyDayToForm(key) {
+    const arr = getDayArray(key);
+
+    scheduleCards.forEach(card => {
+      const slot = Number(card.dataset.slot);
+      const item = arr[slot] || {};
+      const timeInput = card.querySelector(".schedule-time");
+      const titleInput = card.querySelector(".schedule-title");
+      const placeInput = card.querySelector(".schedule-place");
+
+      timeInput.disabled = false;
+      titleInput.disabled = false;
+      placeInput.disabled = false;
+
+      timeInput.value = item.time || "";
+      titleInput.value = item.title || "";
+      placeInput.value = item.place || "";
+    });
+
+    updateEmptyLabel();
+  }
+
+  function updateEmptyLabel() {
+    const anyFilled = scheduleCards.some(card => {
+      const t = card.querySelector(".schedule-time").value.trim();
+      const ti = card.querySelector(".schedule-title").value.trim();
+      const p = card.querySelector(".schedule-place").value.trim();
+      return t || ti || p;
+    });
     noteEmptyLabel.textContent = anyFilled
       ? "入力済みの予定があります。"
-      : "ここに予定を書き込めます。";
+      : "ここに予定を登録できます。";
+  }
+
+  function collectFormToNotes() {
+    if (!selectedKey) return;
+
+    const arr = [];
+    scheduleCards.forEach(card => {
+      const slot = Number(card.dataset.slot);
+      const timeInput = card.querySelector(".schedule-time");
+      const titleInput = card.querySelector(".schedule-title");
+      const placeInput = card.querySelector(".schedule-place");
+
+      const time = timeInput.value.trim();
+      const title = titleInput.value.trim();
+      const place = placeInput.value.trim();
+
+      if (time || title || place) {
+        arr[slot] = { time, title, place };
+      }
+    });
+
+    if (arr.length === 0) {
+      delete notes[selectedKey];
+    } else {
+      notes[selectedKey] = arr;
+    }
 
     saveNotesToStorage();
     updateDayPreviews();
-  });
-});
+    updateEmptyLabel();
+  }
 
-    addNoteBtn.addEventListener("click", () => {
-  const first = noteTextareas[0];
-  if (!first || first.disabled) return;
-  first.focus();
-  const len = first.value.length;
-  first.setSelectionRange(len, len);
-});
+  function openDay(y, m, d) {
+    const dateObj = new Date(y, m, d);
+    selectedKey = makeKey(y, m, d);
 
+    noteTitle.textContent = "この日の予定";
+    noteDateLabel.textContent = formatDateLabel(dateObj);
 
-    prevBtn.addEventListener("click", () => {
-      currentMonth--;
-      if (currentMonth < 0) {
-        currentMonth = 11;
-        currentYear--;
+    applyDayToForm(selectedKey);
+
+    const dayCells = calendarDays.querySelectorAll(".day");
+    dayCells.forEach(cell => {
+      cell.classList.remove("selected");
+      if (cell.dataset.key === selectedKey) {
+        cell.classList.add("selected");
       }
-      renderCalendar(currentYear, currentMonth);
     });
+  }
 
-    nextBtn.addEventListener("click", () => {
-      currentMonth++;
-      if (currentMonth > 11) {
-        currentMonth = 0;
-        currentYear++;
-      }
-      renderCalendar(currentYear, currentMonth);
-    });
+  function updateDayPreviews() {
+    const dayCells = calendarDays.querySelectorAll(".day");
+    dayCells.forEach(cell => {
+      const key = cell.dataset.key;
+      const preview = cell.querySelector(".day-content-preview");
+      const dot = cell.querySelector(".day-note-dot");
+      if (!key || !preview || !dot) return;
 
-    todayBtn.addEventListener("click", () => {
-      currentYear = today.getFullYear();
-      currentMonth = today.getMonth();
-      renderCalendar(currentYear, currentMonth);
-      openDay(today.getFullYear(), today.getMonth(), today.getDate());
-    });
+      const arr = getDayArray(key);
+      const parts = [];
 
-    if (modeToggle && lightLabel && darkLabel) {
-      modeToggle.addEventListener("click", () => {
-        const isDark = document.body.classList.toggle("dark");
-        if (isDark) {
-          lightLabel.classList.remove("active");
-          darkLabel.classList.add("active");
-        } else {
-          darkLabel.classList.remove("active");
-          lightLabel.classList.add("active");
+      arr.forEach(item => {
+        if (!item) return;
+        const time = item.time ? item.time : "";
+        const title = item.title ? item.title : "";
+        if (time || title) {
+          parts.push((time ? time + " " : "") + title);
         }
       });
+
+      if (parts.length) {
+        const combined = parts.slice(0, 3).join(" / ");
+        preview.textContent = combined;
+        dot.style.visibility = "visible";
+      } else {
+        preview.textContent = "";
+        dot.style.visibility = "hidden";
+      }
+    });
+  }
+
+  function renderCalendar(year, month) {
+    const firstDay = new Date(year, month, 1);
+    const startWeekday = firstDay.getDay();
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+
+    monthLabel.textContent = year + "年 " + monthNames[month];
+    todayLabel.textContent = "今日: " + formatDateLabel(today);
+
+    calendarDays.innerHTML = "";
+
+    for (let i = 0; i < startWeekday; i++) {
+      const emptyCell = document.createElement("div");
+      emptyCell.className = "day empty";
+      calendarDays.appendChild(emptyCell);
     }
 
-    function updateNowHero() {
-  const now = new Date();
-  const weekdaysEn = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const monthsEn = ["January","February","March","April","May","June","July",
-                    "August","September","October","November","December"];
+    for (let d = 1; d <= daysInMonth; d++) {
+      const cellDate = new Date(year, month, d);
+      const isToday =
+        cellDate.getFullYear() === today.getFullYear() &&
+        cellDate.getMonth() === today.getMonth() &&
+        cellDate.getDate() === today.getDate();
 
-  const w = weekdaysEn[now.getDay()];
-  const m = monthsEn[now.getMonth()];
-  const d = now.getDate();
+      const dayCell = document.createElement("div");
+      dayCell.className = "day" + (isToday ? " today" : "");
+      const key = makeKey(year, month, d);
+      dayCell.dataset.key = key;
 
-  todayHeroMain.textContent = `${w} ${m} ${d}`;
-  todayHeroTime.textContent = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
-  todayHeroDateBig.textContent = "";   // 使わないので空
-}
+      const numberRow = document.createElement("div");
+      numberRow.className = "day-number-row";
 
+      const num = document.createElement("div");
+      num.className = "day-number";
+      num.textContent = d;
 
-    loadNotesFromStorage();
+      const tag = document.createElement("div");
+      tag.className = "day-tag";
+      tag.textContent = isToday ? "今日" : "";
+
+      numberRow.appendChild(num);
+      numberRow.appendChild(tag);
+
+      const dot = document.createElement("div");
+      dot.className = "day-note-dot";
+      dot.style.visibility = "hidden";
+
+      const preview = document.createElement("div");
+      preview.className = "day-content-preview";
+
+      dayCell.appendChild(numberRow);
+      dayCell.appendChild(preview);
+      dayCell.appendChild(dot);
+
+      dayCell.addEventListener("click", () => {
+        openDay(year, month, d);
+      });
+
+      calendarDays.appendChild(dayCell);
+    }
+
+    updateDayPreviews();
+  }
+
+  scheduleCards.forEach(card => {
+    const timeInput = card.querySelector(".schedule-time");
+    const titleInput = card.querySelector(".schedule-title");
+    const placeInput = card.querySelector(".schedule-place");
+    const mapButton = card.querySelector(".schedule-map-button");
+
+    [timeInput, titleInput, placeInput].forEach(input => {
+      input.addEventListener("input", collectFormToNotes);
+    });
+
+    mapButton.addEventListener("click", () => {
+      const query = placeInput.value.trim();
+      if (!query) return;
+      const url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query);
+      window.open(url, "_blank");
+    });
+  });
+
+  addNoteBtn.addEventListener("click", () => {
+    const firstCard = scheduleCards[0];
+    if (!firstCard) return;
+    const titleInput = firstCard.querySelector(".schedule-title");
+    if (!titleInput || titleInput.disabled) return;
+    titleInput.focus();
+    const len = titleInput.value.length;
+    titleInput.setSelectionRange(len, len);
+  });
+
+  prevBtn.addEventListener("click", () => {
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+    renderCalendar(currentYear, currentMonth);
+  });
+
+  nextBtn.addEventListener("click", () => {
+    currentMonth++;
+    if (currentMonth > 11) {
+      currentMonth = 0;
+      currentYear++;
+    }
+    renderCalendar(currentYear, currentMonth);
+  });
+
+  todayBtn.addEventListener("click", () => {
+    currentYear = today.getFullYear();
+    currentMonth = today.getMonth();
     renderCalendar(currentYear, currentMonth);
     openDay(today.getFullYear(), today.getMonth(), today.getDate());
-    updateNowHero();
-    setInterval(updateNowHero, 30000);
-  </script>
+  });
+
+  if (modeToggle && lightLabel && darkLabel) {
+    modeToggle.addEventListener("click", () => {
+      const isDark = document.body.classList.toggle("dark");
+      if (isDark) {
+        lightLabel.classList.remove("active");
+        darkLabel.classList.add("active");
+      } else {
+        darkLabel.classList.remove("active");
+        lightLabel.classList.add("active");
+      }
+    });
+  }
+
+  function updateNowHero() {
+    const now = new Date();
+    const weekdaysEn = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const monthsEn = [
+      "January","February","March","April","May","June",
+      "July","August","September","October","November","December"
+    ];
+
+    const w = weekdaysEn[now.getDay()];
+    const m = monthsEn[now.getMonth()];
+    const d = now.getDate();
+
+    todayHeroMain.textContent = `${w} ${m} ${d}`;
+    todayHeroTime.textContent = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+    todayHeroDateBig.textContent = "";
+  }
+
+  loadNotesFromStorage();
+  renderCalendar(currentYear, currentMonth);
+  openDay(today.getFullYear(), today.getMonth(), today.getDate());
+  updateNowHero();
+  setInterval(updateNowHero, 30000);
+</script>
+
 </body>
 </html>
