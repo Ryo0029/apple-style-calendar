@@ -205,8 +205,17 @@ body.dark #tzSelect {
 }
 
 .layout-item {
-  min-height:0;
-  cursor:grab;
+  min-height: 0;
+  cursor: grab;
+
+  /* 追加：自由リサイズ可能にする */
+  resize: both;
+  overflow: auto;
+  min-width: 220px;
+}
+
+.layout-item > * {
+  max-width: 100%;
 }
 
 .layout-item:active {
