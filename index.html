@@ -1,23 +1,24 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+  <!-- パスワード -->
   <script>
-  const pass = prompt("4桁のパスワードを入力してください");
+    const pass = prompt("4桁のパスワードを入力してください");
+    const correct = "1929"; // 好きな4桁に変更
 
-  // 正しいパスワードを設定
-  const correct = "1929";
-
-  if (pass !== correct) {
-    document.body.innerHTML = "";
-    document.write("アクセスできません。");
-    throw new Error("Password incorrect");
-  }
-</script>
+    if (pass !== correct) {
+      document.body.innerHTML = "";
+      document.write("アクセスできません。");
+      throw new Error("Password incorrect");
+    }
+  </script>
 
   <meta charset="UTF-8" />
   <title>予定が書き込めるカレンダー</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
+
+  <style>
+    /* 上部の淡い動くグラデーション */
     .top-gradient {
       position: fixed;
       top: 0;
@@ -48,12 +49,12 @@
     }
 
     @keyframes slideGradient {
-      0%   { background-position: 0% 50%; }
+      0%   { background-position:   0% 50%; }
       100% { background-position: 100% 50%; }
     }
 
     :root {
-      --bg: #f5f5f7;
+      --bg: #ffffff;
       --fg: #1d1d1f;
       --subtle: #86868b;
       --accent: #0071e3;
@@ -95,43 +96,7 @@
     }
 
     body.dark {
-      background: #ffffff;
-    }
-      .gradient-wave {
-  position: fixed;
-  inset: -20%;
-  background-size: 400% 400%;
-  opacity: 0.55;
-  filter: blur(40px);
-  animation: waveGradient 18s ease-in-out infinite alternate;
-  z-index: -1;
-  pointer-events: none;
-}
-
-@keyframes waveGradient {
-  0% {
-    transform: translate3d(0, 0, 0);
-    background-position: 0% 50%;
-  }
-  50% {
-    transform: translate3d(-8%, -4%, 0);
-    background-position: 50% 50%;
-  }
-  100% {
-    transform: translate3d(-16%, 0, 0);
-    background-position: 100% 50%;
-  }
-}
-
-      color: var(--fg);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      transition: background 0.25s ease, color 0.25s ease;
-    }
-
-    body.dark {
-      background: #ffffff;
+      background: #050508;
     }
 
     header {
@@ -189,147 +154,310 @@
     }
 
     main {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  padding: 20px 16px 40px;
-}
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 20px 16px 40px;
+    }
 
-.shell {
-  width: 100%;
-  max-width: 1100px;
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); /* 左2 : 右3 */
-  gap: 24px;
-  align-items: flex-start;
-}
+    .shell {
+      width: 100%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); /* 左2 : 右3 */
+      gap: 24px;
+      align-items: flex-start;
+    }
 
-@media (max-width: 880px) {
-  .shell {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
+    @media (max-width: 880px) {
+      .shell {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
 
-.left-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
 
-.today-hero {
-  background: var(--card-bg);
-  border-radius: 24px;
-  padding: 24px 20px;
-  box-shadow: var(--shadow-soft);
-  border: 1px solid var(--border-soft);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 180px;
-}
+    .today-hero {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 24px 20px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border-soft);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 180px;
+    }
 
-.today-hero-main {
-  font-size: clamp(22px, 2.6vw, 28px);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-}
+    .today-hero-main {
+      font-size: clamp(22px, 2.6vw, 28px);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+    }
 
-.today-hero-time {
-  margin-top: 8px;
-  font-size: 16px;
-}
+    .today-hero-time {
+      margin-top: 8px;
+      font-size: 16px;
+    }
 
-.today-hero-date-big {
-  margin-top: 12px;
-  font-size: clamp(42px, 5vw, 56px);
-  font-weight: 600;
-  letter-spacing: -0.04em;
-  text-align: center;
-}
+    .today-hero-date-big {
+      margin-top: 12px;
+      font-size: clamp(42px, 5vw, 56px);
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      text-align: center;
+    }
 
-.today-notes {
-  background: var(--card-bg);
-  border-radius: 24px;
-  padding: 18px 16px 14px;
-  box-shadow: var(--shadow-soft);
-  border: 1px solid var(--border-soft);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 220px;
-}
+    .today-notes {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 18px 16px 14px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 220px;
+    }
 
-.today-notes-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
+    .today-notes-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
 
-.today-notes-title {
-  font-size: 15px;
-  font-weight: 500;
-}
+    .today-notes-title {
+      font-size: 15px;
+      font-weight: 500;
+    }
 
-.add-note-button {
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  border: 1px solid var(--border-soft);
-  background: rgba(255, 255, 255, 0.9);
-  font-size: 18px;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
-}
+    .add-note-button {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(255, 255, 255, 0.9);
+      font-size: 18px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+    }
 
-body.dark .add-note-button {
-  background: rgba(15, 15, 20, 0.9);
-}
+    body.dark .add-note-button {
+      background: rgba(15, 15, 20, 0.9);
+    }
 
-.today-notes-info {
-  font-size: 12px;
-  color: var(--subtle);
-}
+    .today-notes-info {
+      font-size: 12px;
+      color: var(--subtle);
+    }
 
-.note-textarea {
-  margin-top: 4px;
-  width: 100%;
-  min-height: 96px;      /* 4行程度見える高さ */
-  max-height: 180px;
-  resize: vertical;
-  overflow-y: auto;
-}
+    .note-textarea {
+      margin-top: 4px;
+      width: 100%;
+      min-height: 96px;  /* 4行程度 */
+      max-height: 180px;
+      resize: vertical;
+      overflow-y: auto;
+      border-radius: 14px;
+      border: 1px solid var(--border-soft);
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 13px;
+      background-color: var(--note-bg);
+      color: var(--fg);
+      outline: none;
+    }
 
-/* 右側カレンダー全体を囲うパネル */
-.calendar-panel {
-  background: var(--card-bg);
-  border-radius: 24px;
-  padding: 22px 18px 18px;
-  box-shadow: var(--shadow-soft);
-  border: 1px solid var(--border-soft);
-}
+    .calendar-panel {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 22px 18px 18px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border-soft);
+    }
 
-/* 1日のプレビューは最大3行まで */
-.day-content-preview {
-  margin-top: 6px;
-  font-size: 11px;
-  color: var(--subtle);
-  max-height: 42px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  white-space: normal;
-}
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
 
+    .month-block {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .month-label {
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+
+    .today-label {
+      font-size: 13px;
+      color: var(--subtle);
+    }
+
+    .nav-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-button {
+      border: 1px solid var(--border-soft);
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--fg);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.16);
+      backdrop-filter: blur(10px);
+    }
+
+    body.dark .nav-button {
+      background-color: rgba(15, 15, 20, 0.94);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.8);
+    }
+
+    .nav-button.primary {
+      background-color: var(--accent);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 16px 34px rgba(0, 113, 227, 0.6);
+    }
+
+    .weekday-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      column-gap: 8px;
+      padding: 0 2px;
+      margin-bottom: 4px;
+    }
+
+    .weekday {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      color: var(--subtle);
+      text-align: center;
+    }
+
+    .calendar-grid {
+      margin-top: 10px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
+      backdrop-filter: blur(14px);
+    }
+
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .day {
+      position: relative;
+      min-height: 70px;
+      border-radius: 16px;
+      background-color: var(--day-bg);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      padding: 8px 8px 6px;
+      font-size: 13px;
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    body.dark .day {
+      border-color: rgba(255, 255, 255, 0.06);
+    }
+
+    .day.empty {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      pointer-events: none;
+    }
+
+    .day-number-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+
+    .day-number {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .day-tag {
+      font-size: 10px;
+      color: var(--subtle);
+    }
+
+    .day-note-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background-color: var(--accent);
+      margin-left: auto;
+      margin-top: 4px;
+    }
+
+    .day.today {
+      border-color: var(--accent);
+    }
+
+    .day.today .day-number {
+      color: var(--accent);
+    }
+
+    .day.selected {
+      outline: 2px solid var(--accent);
+      outline-offset: 0;
+    }
+
+    .day-content-preview {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--subtle);
+      max-height: 42px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;      /* 最大3行 */
+      -webkit-box-orient: vertical;
+      white-space: normal;
     }
   </style>
 </head>
+
 <body>
   <div class="top-gradient"></div>
 
@@ -341,312 +469,320 @@ body.dark .add-note-button {
     </button>
   </header>
 
-<main>
-  <div class="shell">
-    <!-- 左側：今日の情報＋選択中の日の予定 -->
-    <section class="left-panel">
-      <section class="today-hero">
-        <div class="today-hero-main" id="todayHeroMain"></div>
-        <div class="today-hero-time" id="todayHeroTime"></div>
-        <div class="today-hero-date-big" id="todayHeroDateBig"></div>
+  <main>
+    <div class="shell">
+      <!-- 左：今日の情報＋今日の予定 -->
+      <section class="left-panel">
+        <section class="today-hero">
+          <div class="today-hero-main" id="todayHeroMain"></div>
+          <div class="today-hero-time" id="todayHeroTime"></div>
+          <div class="today-hero-date-big" id="todayHeroDateBig"></div>
+        </section>
+
+        <section class="today-notes">
+          <div class="today-notes-header">
+            <div class="today-notes-title" id="noteTitle">この日の予定</div>
+            <button class="add-note-button" id="addNoteBtn" type="button">＋</button>
+          </div>
+          <div class="today-notes-info" id="noteDateLabel"></div>
+          <textarea
+            id="noteTextarea"
+            class="note-textarea"
+            placeholder="ここに予定やメモを書きます。4行分が見える高さで、スクロールできます。"
+            disabled
+          ></textarea>
+          <div class="today-notes-info" id="noteEmptyLabel">
+            まだ日付が選ばれていません。
+          </div>
+        </section>
       </section>
 
-      <section class="today-notes">
-        <div class="today-notes-header">
-          <div class="today-notes-title" id="noteTitle">この日の予定</div>
-          <button class="add-note-button" id="addNoteBtn" type="button">＋</button>
+      <!-- 右：月カレンダー -->
+      <section class="calendar-panel">
+        <div class="calendar-header">
+          <div class="month-block">
+            <div class="month-label" id="monthLabel"></div>
+            <div class="today-label" id="todayLabel"></div>
+          </div>
+          <div class="nav-buttons">
+            <button class="nav-button" id="prevBtn" type="button">
+              <span>‹</span><span>前の月</span>
+            </button>
+            <button class="nav-button" id="nextBtn" type="button">
+              <span>次の月</span><span>›</span>
+            </button>
+            <button class="nav-button primary" id="todayBtn" type="button">
+              今日へ
+            </button>
+          </div>
         </div>
-        <div class="today-notes-info" id="noteDateLabel"></div>
-        <textarea
-          id="noteTextarea"
-          class="note-textarea"
-          placeholder="ここに予定やメモを書きます。4行分が見える高さで、スクロールできます。"
-          disabled
-        ></textarea>
-        <div class="today-notes-info" id="noteEmptyLabel">
-          まだ日付が選ばれていません。
+
+        <div class="calendar-grid">
+          <div class="weekday-row">
+            <div class="weekday">日</div>
+            <div class="weekday">月</div>
+            <div class="weekday">火</div>
+            <div class="weekday">水</div>
+            <div class="weekday">木</div>
+            <div class="weekday">金</div>
+            <div class="weekday">土</div>
+          </div>
+          <div class="calendar-days" id="calendarDays"></div>
         </div>
       </section>
-    </section>
+    </div>
+  </main>
 
-    <!-- 右側：月カレンダー全面 -->
-    <section class="calendar-panel">
-      <div class="calendar-header">
-        <div class="month-block">
-          <div class="month-label" id="monthLabel"></div>
-          <div class="today-label" id="todayLabel"></div>
-        </div>
-        <div class="nav-buttons">
-          <button class="nav-button" id="prevBtn" type="button">
-            <span>‹</span><span>前の月</span>
-          </button>
-          <button class="nav-button" id="nextBtn" type="button">
-            <span>次の月</span><span>›</span>
-          </button>
-          <button class="nav-button primary" id="todayBtn" type="button">
-            今日へ
-          </button>
-        </div>
-      </div>
+  <script>
+    const monthLabel = document.getElementById("monthLabel");
+    const todayLabel = document.getElementById("todayLabel");
+    const calendarDays = document.getElementById("calendarDays");
 
-      <div class="calendar-grid">
-        <div class="weekday-row">
-          <div class="weekday">日</div>
-          <div class="weekday">月</div>
-          <div class="weekday">火</div>
-          <div class="weekday">水</div>
-          <div class="weekday">木</div>
-          <div class="weekday">金</div>
-          <div class="weekday">土</div>
-        </div>
-        <div class="calendar-days" id="calendarDays"></div>
-      </div>
-    </section>
-  </div>
-</main>
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const todayBtn = document.getElementById("todayBtn");
 
-<script>
-  const monthLabel = document.getElementById("monthLabel");
-  const todayLabel = document.getElementById("todayLabel");
-  const calendarDays = document.getElementById("calendarDays");
+    const noteTitle = document.getElementById("noteTitle");
+    const noteDateLabel = document.getElementById("noteDateLabel");
+    const noteTextarea = document.getElementById("noteTextarea");
+    const noteEmptyLabel = document.getElementById("noteEmptyLabel");
 
-  const prevBtn = document.getElementById("prevBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const todayBtn = document.getElementById("todayBtn");
+    const todayHeroMain = document.getElementById("todayHeroMain");
+    const todayHeroTime = document.getElementById("todayHeroTime");
+    const todayHeroDateBig = document.getElementById("todayHeroDateBig");
+    const addNoteBtn = document.getElementById("addNoteBtn");
 
-  const noteTitle = document.getElementById("noteTitle");
-  const noteDateLabel = document.getElementById("noteDateLabel");
-  const noteTextarea = document.getElementById("noteTextarea");
-  const noteEmptyLabel = document.getElementById("noteEmptyLabel");
+    const modeToggle = document.getElementById("modeToggle");
+    const lightLabel = document.getElementById("lightLabel");
+    const darkLabel = document.getElementById("darkLabel");
 
-  const todayHeroMain = document.getElementById("todayHeroMain");
-  const todayHeroTime = document.getElementById("todayHeroTime");
-  const todayHeroDateBig = document.getElementById("todayHeroDateBig");
-  const addNoteBtn = document.getElementById("addNoteBtn");
+    const today = new Date();
+    let currentYear = today.getFullYear();
+    let currentMonth = today.getMonth();
 
-  const modeToggle = document.getElementById("modeToggle");
-  const lightLabel = document.getElementById("lightLabel");
-  const darkLabel = document.getElementById("darkLabel");
+    const notes = {};
+    let selectedKey = null;
+    const STORAGE_KEY = "calendar_notes_v1";
 
-  const today = new Date();
-  let currentYear = today.getFullYear();
-  let currentMonth = today.getMonth();
+    const monthNames = [
+      "1月","2月","3月","4月","5月","6月",
+      "7月","8月","9月","10月","11月","12月"
+    ];
+    const weekdayNames = ["日","月","火","水","木","金","土"];
 
-  const notes = {};
-  let selectedKey = null;
-  const STORAGE_KEY = "calendar_notes_v1";
-
-  const monthNames = [
-    "1月","2月","3月","4月","5月","6月",
-    "7月","8月","9月","10月","11月","12月"
-  ];
-  const weekdayNames = ["日","月","火","水","木","金","土"];
-
-  function pad2(n) {
-    return String(n).padStart(2, "0");
-  }
-
-  function formatDateLabel(date) {
-    const y = date.getFullYear();
-    const m = date.getMonth() + 1;
-    const d = date.getDate();
-    const w = weekdayNames[date.getDay()];
-    return y + "年" + m + "月" + d + "日（" + w + "）";
-  }
-
-  function makeKey(y, m, d) {
-    const mm = String(m + 1).padStart(2, "0");
-    const dd = String(d).padStart(2, "0");
-    return y + "-" + mm + "-" + dd;
-  }
-
-  function loadNotesFromStorage() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === "object") {
-        Object.assign(notes, parsed);
-      }
-    } catch (e) {
-      console.warn("load error", e);
-    }
-  }
-
-  function saveNotesToStorage() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
-    } catch (e) {
-      console.warn("save error", e);
-    }
-  }
-
-  function openDay(y, m, d) {
-    const dateObj = new Date(y, m, d);
-    selectedKey = makeKey(y, m, d);
-
-    noteTitle.textContent = "この日の予定";
-    noteDateLabel.textContent = formatDateLabel(dateObj);
-    noteTextarea.disabled = false;
-    noteTextarea.value = notes[selectedKey] || "";
-    noteEmptyLabel.textContent =
-      noteTextarea.value.trim() ? "入力済みの予定があります。" : "ここに予定を書き込めます。";
-
-    const dayCells = calendarDays.querySelectorAll(".day");
-    dayCells.forEach(cell => {
-      cell.classList.remove("selected");
-      if (cell.dataset.key === selectedKey) {
-        cell.classList.add("selected");
-      }
-    });
-  }
-
-  function updateDayPreviews() {
-    const dayCells = calendarDays.querySelectorAll(".day");
-    dayCells.forEach(cell => {
-      const key = cell.dataset.key;
-      const preview = cell.querySelector(".day-content-preview");
-      const dot = cell.querySelector(".day-note-dot");
-      if (!key || !preview || !dot) return;
-
-      const text = notes[key] || "";
-      if (text.trim()) {
-        const firstLines = text.split("\n").slice(0, 3).join(" ").trim();
-        preview.textContent = firstLines;
-        dot.style.visibility = "visible";
-      } else {
-        preview.textContent = "";
-        dot.style.visibility = "hidden";
-      }
-    });
-  }
-
-  function renderCalendar(year, month) {
-    const firstDay = new Date(year, month, 1);
-    const startWeekday = firstDay.getDay();
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-
-    monthLabel.textContent = year + "年 " + monthNames[month];
-    todayLabel.textContent = "今日: " + formatDateLabel(today);
-
-    calendarDays.innerHTML = "";
-
-    for (let i = 0; i < startWeekday; i++) {
-      const emptyCell = document.createElement("div");
-      emptyCell.className = "day empty";
-      calendarDays.appendChild(emptyCell);
+    function pad2(n) {
+      return String(n).padStart(2, "0");
     }
 
-    for (let d = 1; d <= daysInMonth; d++) {
-      const cellDate = new Date(year, month, d);
-      const isToday =
-        cellDate.getFullYear() === today.getFullYear() &&
-        cellDate.getMonth() === today.getMonth() &&
-        cellDate.getDate() === today.getDate();
+    function formatDateLabel(date) {
+      const y = date.getFullYear();
+      const m = date.getMonth() + 1;
+      const d = date.getDate();
+      const w = weekdayNames[date.getDay()];
+      return y + "年" + m + "月" + d + "日（" + w + "）";
+    }
 
-      const dayCell = document.createElement("div");
-      dayCell.className = "day" + (isToday ? " today" : "");
-      const key = makeKey(year, month, d);
-      dayCell.dataset.key = key;
+    function makeKey(y, m, d) {
+      const mm = String(m + 1).padStart(2, "0");
+      const dd = String(d).padStart(2, "0");
+      return y + "-" + mm + "-" + dd;
+    }
 
-      const numberRow = document.createElement("div");
-      numberRow.className = "day-number-row";
+    function loadNotesFromStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") {
+          Object.assign(notes, parsed);
+        }
+      } catch (e) {
+        console.warn("load error", e);
+      }
+    }
 
-      const num = document.createElement("div");
-      num.className = "day-number";
-      num.textContent = d;
+    function saveNotesToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+      } catch (e) {
+        console.warn("save error", e);
+      }
+    }
 
-      const tag = document.createElement("div");
-      tag.className = "day-tag";
-      tag.textContent = isToday ? "今日" : "";
+    function openDay(y, m, d) {
+      const dateObj = new Date(y, m, d);
+      selectedKey = makeKey(y, m, d);
 
-      numberRow.appendChild(num);
-      numberRow.appendChild(tag);
+      noteTitle.textContent = "この日の予定";
+      noteDateLabel.textContent = formatDateLabel(dateObj);
+      noteTextarea.disabled = false;
+      noteTextarea.value = notes[selectedKey] || "";
+      noteEmptyLabel.textContent =
+        noteTextarea.value.trim() ? "入力済みの予定があります。" : "ここに予定を書き込めます。";
 
-      const dot = document.createElement("div");
-      dot.className = "day-note-dot";
-      dot.style.visibility = "hidden";
-
-      const preview = document.createElement("div");
-      preview.className = "day-content-preview";
-
-      dayCell.appendChild(numberRow);
-      dayCell.appendChild(preview);
-      dayCell.appendChild(dot);
-
-      dayCell.addEventListener("click", () => {
-        openDay(year, month, d);
+      const dayCells = calendarDays.querySelectorAll(".day");
+      dayCells.forEach(cell => {
+        cell.classList.remove("selected");
+        if (cell.dataset.key === selectedKey) {
+          cell.classList.add("selected");
+        }
       });
-
-      calendarDays.appendChild(dayCell);
     }
 
-    updateDayPreviews();
-  }
+    function updateDayPreviews() {
+      const dayCells = calendarDays.querySelectorAll(".day");
+      dayCells.forEach(cell => {
+        const key = cell.dataset.key;
+        const preview = cell.querySelector(".day-content-preview");
+        const dot = cell.querySelector(".day-note-dot");
+        if (!key || !preview || !dot) return;
 
-  noteTextarea.addEventListener("input", () => {
-    if (!selectedKey) return;
-    const value = noteTextarea.value;
-    notes[selectedKey] = value;
-    saveNotesToStorage();
-    noteEmptyLabel.textContent = value.trim()
-      ? "入力済みの予定があります。"
-      : "ここに予定を書き込めます。";
-    updateDayPreviews();
-  });
-
-  addNoteBtn.addEventListener("click", () => {
-    if (noteTextarea.disabled) return;
-    noteTextarea.focus();
-    const len = noteTextarea.value.length;
-    noteTextarea.setSelectionRange(len, len);
-  });
-
-  prevBtn.addEventListener("click", () => {
-    currentMonth--;
-    if (currentMonth < 0) {
-      currentMonth = 11;
-      currentYear--;
+        const text = notes[key] || "";
+        if (text.trim()) {
+          const firstLines = text.split("\n").slice(0, 3).join(" ").trim();
+          preview.textContent = firstLines;
+          dot.style.visibility = "visible";
+        } else {
+          preview.textContent = "";
+          dot.style.visibility = "hidden";
+        }
+      });
     }
-    renderCalendar(currentYear, currentMonth);
-  });
 
-  nextBtn.addEventListener("click", () => {
-    currentMonth++;
-    if (currentMonth > 11) {
-      currentMonth = 0;
-      currentYear++;
+    function renderCalendar(year, month) {
+      const firstDay = new Date(year, month, 1);
+      const startWeekday = firstDay.getDay();
+      const lastDay = new Date(year, month + 1, 0);
+      const daysInMonth = lastDay.getDate();
+
+      monthLabel.textContent = year + "年 " + monthNames[month];
+      todayLabel.textContent = "今日: " + formatDateLabel(today);
+
+      calendarDays.innerHTML = "";
+
+      for (let i = 0; i < startWeekday; i++) {
+        const emptyCell = document.createElement("div");
+        emptyCell.className = "day empty";
+        calendarDays.appendChild(emptyCell);
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const cellDate = new Date(year, month, d);
+        const isToday =
+          cellDate.getFullYear() === today.getFullYear() &&
+          cellDate.getMonth() === today.getMonth() &&
+          cellDate.getDate() === today.getDate();
+
+        const dayCell = document.createElement("div");
+        dayCell.className = "day" + (isToday ? " today" : "");
+        const key = makeKey(year, month, d);
+        dayCell.dataset.key = key;
+
+        const numberRow = document.createElement("div");
+        numberRow.className = "day-number-row";
+
+        const num = document.createElement("div");
+        num.className = "day-number";
+        num.textContent = d;
+
+        const tag = document.createElement("div");
+        tag.className = "day-tag";
+        tag.textContent = isToday ? "今日" : "";
+
+        numberRow.appendChild(num);
+        numberRow.appendChild(tag);
+
+        const dot = document.createElement("div");
+        dot.className = "day-note-dot";
+        dot.style.visibility = "hidden";
+
+        const preview = document.createElement("div");
+        preview.className = "day-content-preview";
+
+        dayCell.appendChild(numberRow);
+        dayCell.appendChild(preview);
+        dayCell.appendChild(dot);
+
+        dayCell.addEventListener("click", () => {
+          openDay(year, month, d);
+        });
+
+        calendarDays.appendChild(dayCell);
+      }
+
+      updateDayPreviews();
     }
-    renderCalendar(currentYear, currentMonth);
-  });
 
-  todayBtn.addEventListener("click", () => {
-    currentYear = today.getFullYear();
-    currentMonth = today.getMonth();
+    noteTextarea.addEventListener("input", () => {
+      if (!selectedKey) return;
+      const value = noteTextarea.value;
+      notes[selectedKey] = value;
+      saveNotesToStorage();
+      noteEmptyLabel.textContent = value.trim()
+        ? "入力済みの予定があります。"
+        : "ここに予定を書き込めます。";
+      updateDayPreviews();
+    });
+
+    addNoteBtn.addEventListener("click", () => {
+      if (noteTextarea.disabled) return;
+      noteTextarea.focus();
+      const len = noteTextarea.value.length;
+      noteTextarea.setSelectionRange(len, len);
+    });
+
+    prevBtn.addEventListener("click", () => {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      renderCalendar(currentYear, currentMonth);
+    });
+
+    nextBtn.addEventListener("click", () => {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendar(currentYear, currentMonth);
+    });
+
+    todayBtn.addEventListener("click", () => {
+      currentYear = today.getFullYear();
+      currentMonth = today.getMonth();
+      renderCalendar(currentYear, currentMonth);
+      openDay(today.getFullYear(), today.getMonth(), today.getDate());
+    });
+
+    if (modeToggle && lightLabel && darkLabel) {
+      modeToggle.addEventListener("click", () => {
+        const isDark = document.body.classList.toggle("dark");
+        if (isDark) {
+          lightLabel.classList.remove("active");
+          darkLabel.classList.add("active");
+        } else {
+          darkLabel.classList.remove("active");
+          lightLabel.classList.add("active");
+        }
+      });
+    }
+
+    function updateNowHero() {
+      const now = new Date();
+      const w = weekdayNames[now.getDay()];
+      const m = monthNames[now.getMonth()];
+      todayHeroMain.textContent = `今日・${w}・${m}`;
+      todayHeroTime.textContent = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+      todayHeroDateBig.textContent = `${now.getDate()}`;
+    }
+
+    loadNotesFromStorage();
     renderCalendar(currentYear, currentMonth);
     openDay(today.getFullYear(), today.getMonth(), today.getDate());
-  });
-
-  if (modeToggle && lightLabel && darkLabel) {
-    modeToggle.addEventListener("click", () => {
-      const isDark = document.body.classList.toggle("dark");
-      if (isDark) {
-        lightLabel.classList.remove("active");
-        darkLabel.classList.add("active");
-      } else {
-        darkLabel.classList.remove("active");
-        lightLabel.classList.add("active");
-      }
-    });
-  }
-
-  function updateNowHero() {
-    const now = new Date();
-    const w = weekdayNames[now.getDay()];
-    const m = monthNames[now.getMonth()];
-    todayHeroMain.textContent = `今日・${w}・${m}`;
-    todayHeroTime.textContent = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
-
+    updateNowHero();
+    setInterval(updateNowHero, 30000);
+  </script>
 </body>
 </html>
