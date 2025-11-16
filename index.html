@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+  <script>
+  const pass = prompt("4桁のパスワードを入力してください");
+
+  // 正しいパスワードを設定
+  const correct = "1929";
+
+  if (pass !== correct) {
+    document.body.innerHTML = "";
+    document.write("アクセスできません。");
+    throw new Error("Password incorrect");
+  }
+</script>
+
   <meta charset="UTF-8" />
   <title>予定が書き込めるカレンダー</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
