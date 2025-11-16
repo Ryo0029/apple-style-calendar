@@ -7,22 +7,25 @@
 
 <style>
 /* ---------------------------------------------------
-   基本テーマ
+   基本テーマ（Light を明るく / Dark は暗く）
 --------------------------------------------------- */
 :root {
-  --bg: #050510;
-  --fg: #f5f5f7;
+  --bg: #f5f5f7;
+  --fg: #1d1d1f;
   --accent: #0a84ff;
-  --card-glass-light: rgba(255,255,255,0.16);
-  --card-glass-dark : rgba(10,10,15,0.75);
-  --border-soft-light: rgba(255,255,255,0.45);
-  --border-soft-dark : rgba(255,255,255,0.18);
-  --shadow-soft: 0 18px 40px rgba(0,0,0,0.55);
+
+  --card-glass-light: rgba(255,255,255,0.78);
+  --card-glass-dark : rgba(10,10,15,0.78);
+
+  --border-soft-light: rgba(0,0,0,0.10);
+  --border-soft-dark : rgba(255,255,255,0.22);
+
+  --shadow-soft: 0 18px 40px rgba(0,0,0,0.25);
 }
 
 body.dark {
-  /* ダークでも値は同じ変数を使う（背景だけ少し暗く） */
-  --bg: #02020a;
+  --bg:#02020a;
+  --fg:#f5f5f7;
 }
 
 body {
@@ -56,14 +59,14 @@ body {
     #d44dff
   );
   background-size: 400% 400%;
-  opacity: 0.40;
-  filter: blur(80px);
+  opacity: 0.32;          /* Light は少し弱め */
+  filter: blur(70px);
   animation: appleWave 18s ease-in-out infinite alternate;
   pointer-events: none;
 }
 
 body.dark .gradient-bg {
-  opacity: 0.55;
+  opacity: 0.55;          /* Dark では強め */
   filter: blur(90px);
 }
 
@@ -96,12 +99,17 @@ header {
   z-index:20;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  background:rgba(10,10,15,0.65);
+  background:rgba(255,255,255,0.72);
+  border-bottom:1px solid rgba(0,0,0,0.08);
+}
+
+body.dark header {
+  background:rgba(10,10,15,0.72);
   border-bottom:1px solid rgba(255,255,255,0.12);
 }
 
 /* ---------------------------------------------------
-   ピル型ボタン（CALENDAR / TZ / MODE など）
+   ピル型ボタン（CALENDAR / TZ / MODE）
 --------------------------------------------------- */
 #headerMode,
 #tzButton,
@@ -109,12 +117,12 @@ header {
   cursor:pointer;
   padding:6px 16px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,0.25);
-  background:rgba(255,255,255,0.10);
+  border:1px solid rgba(0,0,0,0.15);
+  background:rgba(255,255,255,0.85);
   color:var(--fg);
-  box-shadow:0 6px 18px rgba(0,0,0,0.4);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
+  box-shadow:0 6px 18px rgba(0,0,0,0.18);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
   display:inline-flex;
   align-items:center;
   gap:6px;
@@ -125,6 +133,13 @@ header {
     border-color 0.18s ease;
 }
 
+body.dark #headerMode,
+body.dark #tzButton,
+body.dark #modeToggle {
+  border-color:rgba(255,255,255,0.20);
+  background:rgba(20,20,30,0.85);
+}
+
 #headerMode {
   font-weight:700;
 }
@@ -132,16 +147,22 @@ header {
 #headerMode:hover,
 #tzButton:hover,
 #modeToggle:hover {
-  background:rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.96);
   transform:translateY(-1px);
-  box-shadow:0 10px 24px rgba(0,0,0,0.5);
+  box-shadow:0 10px 24px rgba(0,0,0,0.30);
+}
+
+body.dark #headerMode:hover,
+body.dark #tzButton:hover,
+body.dark #modeToggle:hover {
+  background:rgba(40,40,60,0.96);
 }
 
 #headerMode:active,
 #tzButton:active,
 #modeToggle:active {
   transform:scale(0.97);
-  box-shadow:0 4px 10px rgba(0,0,0,0.6);
+  box-shadow:0 4px 10px rgba(0,0,0,0.4);
 }
 
 .tz-select-box {
@@ -150,15 +171,20 @@ header {
   gap:8px;
 }
 
-/* セレクトボックス自体も半透明 */
+/* タイムゾーンセレクト */
 #tzSelect {
   padding:6px 10px;
   border-radius:10px;
-  border:1px solid rgba(255,255,255,0.25);
-  background:rgba(10,10,20,0.7);
+  border:1px solid rgba(0,0,0,0.18);
+  background:rgba(255,255,255,0.9);
   color:var(--fg);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+
+body.dark #tzSelect {
+  border-color:rgba(255,255,255,0.25);
+  background:rgba(15,15,25,0.9);
 }
 
 /* ---------------------------------------------------
@@ -188,8 +214,8 @@ header {
   gap:24px;
 }
 
-/* iOS 17 風ガラスカード共通 */
-.glass-card {
+/* iOS 17 風ガラスカード */
+.glass-card-base {
   border-radius:24px;
   background:var(--card-glass-light);
   border:1px solid var(--border-soft-light);
@@ -198,7 +224,7 @@ header {
   -webkit-backdrop-filter:blur(26px);
 }
 
-body.dark .glass-card {
+body.dark .glass-card-base {
   background:var(--card-glass-dark);
   border-color:var(--border-soft-dark);
 }
@@ -209,11 +235,10 @@ body.dark .glass-card {
   text-align:center;
 }
 
-/* 継承 */
+/* glass 適用 */
 .today-hero,
 .today-notes,
 .calendar-panel {
-  /* glass-card と同等設定 */
   border-radius:24px;
   background:var(--card-glass-light);
   border:1px solid var(--border-soft-light);
@@ -259,12 +284,10 @@ body.dark .calendar-panel {
 #addNoteBtn {
   padding:4px 12px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,0.25);
-  background:rgba(255,255,255,0.18);
+  border:1px solid rgba(0,0,0,0.18);
+  background:rgba(255,255,255,0.92);
   cursor:pointer;
-  box-shadow:0 8px 20px rgba(0,0,0,0.45);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
+  box-shadow:0 8px 20px rgba(0,0,0,0.25);
   font-size:16px;
   line-height:1;
   transition:
@@ -273,14 +296,19 @@ body.dark .calendar-panel {
     box-shadow 0.18s ease;
 }
 
+body.dark #addNoteBtn {
+  border-color:rgba(255,255,255,0.25);
+  background:rgba(35,35,55,0.95);
+}
+
 #addNoteBtn:hover {
-  background:rgba(255,255,255,0.26);
+  background:rgba(255,255,255,1);
   transform:translateY(-1px);
 }
 
 #addNoteBtn:active {
   transform:scale(0.96);
-  box-shadow:0 4px 10px rgba(0,0,0,0.6);
+  box-shadow:0 4px 10px rgba(0,0,0,0.4);
 }
 
 .note-list {
@@ -291,15 +319,20 @@ body.dark .calendar-panel {
   overflow-y:auto;
 }
 
-/* 各予定カードもガラス風に */
+/* 各予定カード */
 .note-card {
   padding:12px;
   border-radius:16px;
-  background:rgba(10,10,20,0.7);
-  border:1px solid rgba(255,255,255,0.22);
-  box-shadow:0 12px 26px rgba(0,0,0,0.55);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.85);
+  border:1px solid rgba(0,0,0,0.08);
+  box-shadow:0 12px 26px rgba(0,0,0,0.25);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+
+body.dark .note-card {
+  background:rgba(15,15,30,0.9);
+  border-color:rgba(255,255,255,0.22);
 }
 
 .note-row {
@@ -316,24 +349,45 @@ body.dark .calendar-panel {
   flex:1;
   padding:6px 10px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,0.24);
-  background:rgba(5,5,15,0.9);
+  border:1px solid rgba(0,0,0,0.15);
+  background:rgba(255,255,255,0.96);
   color:var(--fg);
   font-size:14px;
+}
+
+body.dark .note-row input {
+  border-color:rgba(255,255,255,0.24);
+  background:rgba(10,10,22,0.96);
 }
 
 .note-row input::placeholder {
   opacity:0.6;
 }
 
+/* 地図ボタン / 削除ボタン */
+.note-map,
 .note-delete {
-  padding:6px 12px;
+  padding:6px 10px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,0.3);
-  background:rgba(255,80,80,0.16);
-  color:#ffdede;
+  border:1px solid rgba(0,0,0,0.14);
+  background:rgba(255,255,255,0.96);
   cursor:pointer;
   font-size:13px;
+  white-space:nowrap;
+}
+
+body.dark .note-map,
+body.dark .note-delete {
+  border-color:rgba(255,255,255,0.22);
+  background:rgba(25,25,40,0.96);
+}
+
+.note-map {
+  color:var(--accent);
+}
+
+.note-delete {
+  color:#c82828;
 }
 
 /* ---------------------------------------------------
@@ -356,17 +410,22 @@ body.dark .calendar-panel {
   gap:8px;
 }
 
-/* 日セルも半透明ガラス化 */
+/* 日セル */
 .day-cell {
   height:100px;
   padding:6px 8px;
   border-radius:18px;
-  border:1px solid rgba(255,255,255,0.16);
-  background:rgba(10,10,25,0.66);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  box-shadow:0 10px 24px rgba(0,0,0,0.55);
+  border:1px solid rgba(0,0,0,0.08);
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  box-shadow:0 10px 24px rgba(0,0,0,0.18);
   font-size:14px;
+}
+
+body.dark .day-cell {
+  border-color:rgba(255,255,255,0.18);
+  background:rgba(15,15,30,0.9);
 }
 
 /* ---------------------------------------------------
@@ -389,11 +448,16 @@ body.dark .calendar-panel {
 #addTodoBtn {
   padding:6px 14px;
   border-radius:999px;
-  background:rgba(255,255,255,0.18);
-  border:1px solid rgba(255,255,255,0.28);
+  background:rgba(255,255,255,0.96);
+  border:1px solid rgba(0,0,0,0.14);
   cursor:pointer;
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+
+body.dark #addTodoBtn {
+  border-color:rgba(255,255,255,0.22);
+  background:rgba(25,25,40,0.96);
 }
 
 .todo-list {
@@ -409,30 +473,46 @@ body.dark .calendar-panel {
   gap:10px;
   padding:10px 12px;
   border-radius:18px;
-  background:rgba(10,10,25,0.7);
-  border:1px solid rgba(255,255,255,0.22);
-  box-shadow:0 12px 26px rgba(0,0,0,0.55);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
+  background:rgba(255,255,255,0.94);
+  border:1px solid rgba(0,0,0,0.10);
+  box-shadow:0 12px 26px rgba(0,0,0,0.22);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
   cursor:grab;
+}
+
+body.dark .todo-item {
+  background:rgba(15,15,30,0.94);
+  border-color:rgba(255,255,255,0.20);
+  box-shadow:0 12px 26px rgba(0,0,0,0.55);
 }
 
 .todo-item input[type="text"] {
   flex:1;
   padding:6px 10px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,0.22);
-  background:rgba(5,5,15,0.9);
+  border:1px solid rgba(0,0,0,0.18);
+  background:rgba(255,255,255,0.98);
   color:var(--fg);
+}
+
+body.dark .todo-item input[type="text"] {
+  border-color:rgba(255,255,255,0.22);
+  background:rgba(10,10,22,0.98);
 }
 
 .todo-delete {
   padding:6px 10px;
   cursor:pointer;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,0.3);
-  background:rgba(255,80,80,0.16);
-  color:#ffdede;
+  border:1px solid rgba(0,0,0,0.18);
+  background:rgba(255,240,240,0.98);
+  color:#c82828;
+}
+
+body.dark .todo-delete {
+  border-color:rgba(255,255,255,0.22);
+  background:rgba(60,20,20,0.98);
 }
 
 .todo-item:active {
@@ -446,7 +526,6 @@ body.dark .calendar-panel {
   transition:opacity 0.35s ease;
 }
 </style>
-
 </head>
 
 <body>
@@ -484,12 +563,7 @@ body.dark .calendar-panel {
           <button id="addNoteBtn">＋</button>
         </div>
 
-        <datalist id="placeCandidates">
-          <option>Starbucks</option>
-          <option>McDonald's</option>
-          <option>Tokyo Station</option>
-          <option>Shibuya Scramble</option>
-        </datalist>
+        <!-- datalist は廃止 -->
 
         <div class="note-list" id="noteList"></div>
       </section>
@@ -536,7 +610,7 @@ const STORAGE_TODO  = "todo_v1";
 const STORAGE_TZ    = "timezone_v1";
 
 /* ============================================================
-   今日の予定（保存 / 削除 / datalist）
+   今日の予定（保存 / 削除 / Googleマップ連携）
 ============================================================ */
 const noteList = document.getElementById("noteList");
 const addNoteBtn = document.getElementById("addNoteBtn");
@@ -558,29 +632,44 @@ function renderNotes() {
 
     card.innerHTML = `
       <div class="note-row">
-        <input type="time" value="${note.time}">
-        <input list="placeCandidates" type="text" placeholder="Place" value="${note.place}">
+        <input type="time" class="note-time" value="${note.time || ""}">
+        <input type="text" class="note-title" placeholder="Title" value="${note.title || ""}">
       </div>
       <div class="note-row">
-        <input type="text" placeholder="Title" value="${note.title}">
+        <input type="text" class="note-place" placeholder="Place" value="${note.place || ""}">
+        <button class="note-map">地図</button>
         <button class="note-delete">削除</button>
       </div>
     `;
 
-    // 削除
-    card.querySelector(".note-delete").addEventListener("click", () => {
+    const timeInput  = card.querySelector(".note-time");
+    const titleInput = card.querySelector(".note-title");
+    const placeInput = card.querySelector(".note-place");
+    const mapBtn     = card.querySelector(".note-map");
+    const delBtn     = card.querySelector(".note-delete");
+
+    function syncAndSave() {
+      notes[index].time  = timeInput.value;
+      notes[index].title = titleInput.value;
+      notes[index].place = placeInput.value;
+      saveNotes(notes);
+    }
+
+    [timeInput, titleInput, placeInput].forEach(input => {
+      input.addEventListener("input", syncAndSave);
+    });
+
+    delBtn.addEventListener("click", () => {
       notes.splice(index, 1);
       saveNotes(notes);
       renderNotes();
     });
 
-    // 入力 → 保存
-    card.addEventListener("input", () => {
-      const inputs = card.querySelectorAll("input");
-      notes[index].time  = inputs[0].value;
-      notes[index].place = inputs[1].value;
-      notes[index].title = inputs[2].value;
-      saveNotes(notes);
+    mapBtn.addEventListener("click", () => {
+      const q = placeInput.value.trim();
+      if (!q) return;
+      const url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+      window.open(url, "_blank");
     });
 
     noteList.appendChild(card);
@@ -677,11 +766,24 @@ setInterval(updateTime, 30000);
 
 
 /* ============================================================
-   ダークモード
+   ダークモード（ボタン表示も同期）
 ============================================================ */
-document.getElementById("modeToggle").addEventListener("click", () => {
+const modeToggle = document.getElementById("modeToggle");
+
+function updateModeButtonLabel() {
+  if (document.body.classList.contains("dark")) {
+    modeToggle.textContent = "Light";
+  } else {
+    modeToggle.textContent = "Dark";
+  }
+}
+
+modeToggle.addEventListener("click", () => {
   document.body.classList.toggle("dark");
+  updateModeButtonLabel();
 });
+
+updateModeButtonLabel();
 
 
 /* ============================================================
@@ -693,7 +795,6 @@ const todoPage = document.getElementById("todoPage");
 
 function fadeOut(elem, cb) {
   elem.style.opacity = "0";
-
   elem.addEventListener("transitionend", function handler() {
     elem.removeEventListener("transitionend", handler);
     elem.style.display = "none";
@@ -704,7 +805,6 @@ function fadeOut(elem, cb) {
 function fadeIn(elem) {
   elem.style.display = "block";
   elem.style.opacity = "0";
-
   requestAnimationFrame(() => {
     elem.style.opacity = "1";
   });
@@ -713,14 +813,11 @@ function fadeIn(elem) {
 headerMode.addEventListener("click", () => {
   if (headerMode.textContent === "CALENDAR") {
     headerMode.textContent = "TODO";
-
     fadeOut(calendarPage, () => {
       fadeIn(todoPage);
     });
-
   } else {
     headerMode.textContent = "CALENDAR";
-
     fadeOut(todoPage, () => {
       fadeIn(calendarPage);
     });
