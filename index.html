@@ -52,7 +52,7 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif;
-      background: linear-gradient(
+      background: #000000; 
   120deg,
   #ff4d4d,
   #ff884d,
@@ -68,6 +68,47 @@
   #d44dff
 );
 
+      .gradient-wave {
+  position: fixed;
+  inset: -20%;
+  background: linear-gradient(
+    120deg,
+    #ff4d4d,
+    #ff884d,
+    #ffd44d,
+    #e4ff4d,
+    #a9ff4d,
+    #4dff88,
+    #4dffd4,
+    #4dd4ff,
+    #4d88ff,
+    #4d4dff,
+    #884dff,
+    #d44dff
+  );
+  background-size: 400% 400%;
+  opacity: 0.55;
+  filter: blur(40px);
+  animation: waveGradient 18s ease-in-out infinite alternate;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes waveGradient {
+  0% {
+    transform: translate3d(0, 0, 0);
+    background-position: 0% 50%;
+  }
+  50% {
+    transform: translate3d(-8%, -4%, 0);
+    background-position: 50% 50%;
+  }
+  100% {
+    transform: translate3d(-16%, 0, 0);
+    background-position: 100% 50%;
+  }
+}
+
       color: var(--fg);
       min-height: 100vh;
       display: flex;
@@ -76,7 +117,7 @@
     }
 
     body.dark {
-      background: radial-gradient(circle at top, #18181b 0, #02010a 60%);
+      background: #000000;
     }
 
     header {
