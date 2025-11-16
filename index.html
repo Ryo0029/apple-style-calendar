@@ -2,42 +2,40 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>Apple Style Calendar</title>
+<title>iOS Style Calendar</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 /* ---------------------------------------------------
-   基本テーマ（Light 明るめ / Dark 暗め）
+   基本テーマ（ガラス＋iOS17風）
 --------------------------------------------------- */
 :root {
-  --bg: #f5f5f7;
+  --bg: rgba(255,255,255,0.60);
   --fg: #1d1d1f;
   --accent: #0a84ff;
-
-  --card-glass-light: rgba(255,255,255,0.78);
-  --card-glass-dark : rgba(10,10,15,0.78);
-
-  --border-soft-light: rgba(0,0,0,0.10);
-  --border-soft-dark : rgba(255,255,255,0.22);
-
-  --shadow-soft: 0 18px 40px rgba(0,0,0,0.25);
+  --card-bg: rgba(255,255,255,0.55);
+  --glass-border: rgba(255,255,255,0.35);
 }
 
 body.dark {
-  --bg:#02020a;
-  --fg:#f5f5f7;
+  --bg: rgba(10,10,10,0.55);
+  --fg: #f5f5f7;
+  --accent:#0a84ff;
+  --card-bg: rgba(20,20,20,0.55);
+  --glass-border: rgba(255,255,255,0.28);
 }
 
 body {
   margin:0;
-  background:var(--bg);
-  color:var(--fg);
   font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Segoe UI,sans-serif;
-  transition:background 0.25s ease,color 0.25s ease;
+  background:var(--bg);
+  backdrop-filter: blur(45px);
+  color:var(--fg);
+  transition:0.25s ease;
 }
 
 /* ---------------------------------------------------
-   Apple風の動く12色グラデーション背景
+   背景グラデーション（Apple風12色）
 --------------------------------------------------- */
 .gradient-bg {
   position: fixed;
@@ -59,130 +57,42 @@ body {
     #d44dff
   );
   background-size: 400% 400%;
-  opacity: 0.32;
+  opacity: 0.35;
   filter: blur(70px);
   animation: appleWave 18s ease-in-out infinite alternate;
   pointer-events: none;
 }
 
-body.dark .gradient-bg {
-  opacity: 0.55;
-  filter: blur(90px);
-}
-
 @keyframes appleWave {
-  0% {
-    transform: translate3d(0, 0, 0);
-    background-position: 0% 50%;
-  }
-  50% {
-    transform: translate3d(-10%, -4%, 0);
-    background-position: 50% 50%;
-  }
-  100% {
-    transform: translate3d(-20%, 0, 0);
-    background-position: 100% 50%;
-  }
+  0% { background-position: 0% 50%; }
+  50% { background-position: 50% 50%; }
+  100% { background-position: 100% 50%; }
 }
 
 /* ---------------------------------------------------
-   ヘッダー（iOS 風ガラスバー）
+   ヘッダー
 --------------------------------------------------- */
 header {
-  padding:10px 16px;
-  font-size:14px;
+  padding:16px;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  position:sticky;
-  top:0;
-  z-index:20;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  background:rgba(255,255,255,0.72);
-  border-bottom:1px solid rgba(0,0,0,0.08);
 }
 
-body.dark header {
-  background:rgba(10,10,15,0.72);
-  border-bottom:1px solid rgba(255,255,255,0.12);
-}
-
-/* ピル型ボタン（CALENDAR / TZ / MODE） */
 #headerMode,
-#tzButton,
-#modeToggle {
+#modeToggle,
+#tzButton {
+  padding:8px 16px;
+  border-radius:20px;
+  background:var(--card-bg);
+  backdrop-filter: blur(25px);
+  border:1px solid var(--glass-border);
   cursor:pointer;
-  padding:6px 16px;
-  border-radius:999px;
-  border:1px solid rgba(0,0,0,0.15);
-  background:rgba(255,255,255,0.85);
-  color:var(--fg);
-  box-shadow:0 6px 18px rgba(0,0,0,0.18);
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  transition:
-    background 0.18s ease,
-    transform 0.12s ease,
-    box-shadow 0.18s ease,
-    border-color 0.18s ease;
 }
 
-body.dark #headerMode,
-body.dark #tzButton,
-body.dark #modeToggle {
-  border-color:rgba(255,255,255,0.20);
-  background:rgba(20,20,30,0.85);
-}
-
+/* 今は CALENDAR/TODO の切替だけに使用 */
 #headerMode {
-  font-weight:700;
-}
-
-#headerMode:hover,
-#tzButton:hover,
-#modeToggle:hover {
-  background:rgba(255,255,255,0.96);
-  transform:translateY(-1px);
-  box-shadow:0 10px 24px rgba(0,0,0,0.30);
-}
-
-body.dark #headerMode:hover,
-body.dark #tzButton:hover,
-body.dark #modeToggle:hover {
-  background:rgba(40,40,60,0.96);
-}
-
-#headerMode:active,
-#tzButton:active,
-#modeToggle:active {
-  transform:scale(0.97);
-  box-shadow:0 4px 10px rgba(0,0,0,0.4);
-}
-
-.tz-select-box {
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-/* タイムゾーンセレクト */
-#tzSelect {
-  padding:6px 10px;
-  border-radius:10px;
-  border:1px solid rgba(0,0,0,0.18);
-  background:rgba(255,255,255,0.9);
-  color:var(--fg);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-}
-
-body.dark #tzSelect {
-  border-color:rgba(255,255,255,0.25);
-  background:rgba(15,15,25,0.9);
+  min-width:100px;
 }
 
 /* ---------------------------------------------------
@@ -191,42 +101,26 @@ body.dark #tzSelect {
 .shell {
   display:grid;
   grid-template-columns:38% 62%;
-  gap:24px;
-  padding:24px;
-  max-width:1500px;
-  margin:0 auto;
-}
-
-@media (max-width: 900px) {
-  .shell {
-    grid-template-columns:1fr;
-  }
+  gap:20px;
+  padding:20px;
 }
 
 /* ---------------------------------------------------
-   左パネル（今日）
+   左パネル：今日情報
 --------------------------------------------------- */
 .left-panel {
   display:flex;
   flex-direction:column;
-  gap:24px;
+  gap:20px;
 }
 
-/* 今日の時刻カード */
 .today-hero {
   padding:32px;
-  text-align:center;
   border-radius:24px;
-  background:var(--card-glass-light);
-  border:1px solid var(--border-soft-light);
-  box-shadow:var(--shadow-soft);
-  backdrop-filter:blur(26px);
-  -webkit-backdrop-filter:blur(26px);
-}
-
-body.dark .today-hero {
-  background:var(--card-glass-dark);
-  border-color:var(--border-soft-dark);
+  background:var(--card-bg);
+  border:1px solid var(--glass-border);
+  backdrop-filter: blur(30px);
+  text-align:center;
 }
 
 .hero-time {
@@ -236,9 +130,8 @@ body.dark .today-hero {
 
 .hero-date {
   margin-top:8px;
-  font-size:20px;
-  font-weight:500;
-  opacity:0.9;
+  font-size:22px;
+  font-weight:600;
 }
 
 /* ---------------------------------------------------
@@ -246,372 +139,160 @@ body.dark .today-hero {
 --------------------------------------------------- */
 .today-notes {
   padding:20px;
-  border-radius:24px;
-  background:var(--card-glass-light);
-  border:1px solid var(--border-soft-light);
-  box-shadow:var(--shadow-soft);
-  backdrop-filter:blur(26px);
-  -webkit-backdrop-filter:blur(26px);
-}
-
-body.dark .today-notes {
-  background:var(--card-glass-dark);
-  border-color:var(--border-soft-dark);
+  border-radius:20px;
+  background:var(--card-bg);
+  border:1px solid var(--glass-border);
+  backdrop-filter: blur(25px);
 }
 
 .notes-header {
   display:flex;
   justify-content:space-between;
-  font-weight:600;
-  margin-bottom:8px;
   align-items:center;
+  margin-bottom:12px;
 }
 
 #addNoteBtn {
   padding:4px 12px;
-  border-radius:999px;
-  border:1px solid rgba(0,0,0,0.18);
-  background:rgba(255,255,255,0.92);
+  border-radius:14px;
+  border:1px solid var(--glass-border);
+  background:var(--card-bg);
   cursor:pointer;
-  box-shadow:0 8px 20px rgba(0,0,0,0.25);
-  font-size:16px;
-  line-height:1;
-  transition:
-    background 0.18s ease,
-    transform 0.12s ease,
-    box-shadow 0.18s ease;
 }
 
-body.dark #addNoteBtn {
-  border-color:rgba(255,255,255,0.25);
-  background:rgba(35,35,55,0.95);
-}
-
-#addNoteBtn:hover {
-  background:rgba(255,255,255,1);
-  transform:translateY(-1px);
-}
-
-#addNoteBtn:active {
-  transform:scale(0.96);
-  box-shadow:0 4px 10px rgba(0,0,0,0.4);
-}
-
-/* 日付ナビ（前日 / 今日 / 翌日） */
-.day-nav {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  margin-bottom:10px;
-  font-size:13px;
-}
-
-.day-nav-center {
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.day-nav-btn {
-  padding:4px 10px;
-  border-radius:999px;
-  border:1px solid rgba(0,0,0,0.15);
-  background:rgba(255,255,255,0.96);
-  cursor:pointer;
-  font-size:12px;
-}
-
-body.dark .day-nav-btn {
-  border-color:rgba(255,255,255,0.22);
-  background:rgba(30,30,50,0.96);
-}
-
-.selected-date-label {
-  min-width: 160px;
-}
-
-/* 予定リスト */
 .note-list {
   display:flex;
   flex-direction:column;
-  gap:12px;
-  max-height:260px;
-  overflow-y:auto;
+  gap:10px;
 }
 
 .note-card {
-  padding:12px;
-  border-radius:16px;
-  background:rgba(255,255,255,0.85);
-  border:1px solid rgba(0,0,0,0.08);
-  box-shadow:0 12px 26px rgba(0,0,0,0.25);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-}
-
-body.dark .note-card {
-  background:rgba(15,15,30,0.9);
-  border-color:rgba(255,255,255,0.22);
+  padding:10px;
+  background:var(--bg);
+  border-radius:12px;
+  border:1px solid var(--glass-border);
 }
 
 .note-row {
   display:flex;
   gap:8px;
-  margin-bottom:8px;
+  margin-bottom:6px;
 }
 
-.note-row:last-child {
-  margin-bottom:0;
-}
-
-.note-row input {
+.note-row input[type="text"],
+.note-row input[type="color"] {
   flex:1;
+  padding:6px;
+  border-radius:10px;
+  border:1px solid var(--glass-border);
+  background:rgba(255,255,255,0.7);
+}
+
+/* 場所行の地図ボタン */
+.map-open {
   padding:6px 10px;
-  border-radius:999px;
-  border:1px solid rgba(0,0,0,0.15);
-  background:rgba(255,255,255,0.96);
-  color:var(--fg);
-  font-size:14px;
-}
-
-body.dark .note-row input {
-  border-color:rgba(255,255,255,0.24);
-  background:rgba(10,10,22,0.96);
-}
-
-.note-row input::placeholder {
-  opacity:0.6;
-}
-
-.note-map,
-.note-delete {
-  padding:6px 10px;
-  border-radius:999px;
-  border:1px solid rgba(0,0,0,0.14);
-  background:rgba(255,255,255,0.96);
+  border-radius:10px;
+  border:1px solid var(--glass-border);
+  background:var(--card-bg);
   cursor:pointer;
-  font-size:13px;
   white-space:nowrap;
 }
 
-body.dark .note-map,
-body.dark .note-delete {
-  border-color:rgba(255,255,255,0.22);
-  background:rgba(25,25,40,0.96);
-}
-
-.note-map {
-  color:var(--accent);
-}
-
 .note-delete {
-  color:#c82828;
+  padding:6px 10px;
+  border-radius:10px;
+  border:1px solid var(--glass-border);
+  background:var(--card-bg);
+  cursor:pointer;
 }
 
 /* ---------------------------------------------------
-   カレンダー
+   カレンダー（iOS風 月表示）
 --------------------------------------------------- */
 .calendar-panel {
   padding:20px;
-  border-radius:24px;
-  background:var(--card-glass-light);
-  border:1px solid var(--border-soft-light);
-  box-shadow:var(--shadow-soft);
-  backdrop-filter:blur(26px);
-  -webkit-backdrop-filter:blur(26px);
-}
-
-body.dark .calendar-panel {
-  background:var(--card-glass-dark);
-  border-color:var(--border-soft-dark);
+  border-radius:22px;
+  background:var(--card-bg);
+  border:1px solid var(--glass-border);
+  backdrop-filter: blur(25px);
 }
 
 .calendar-header {
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:16px;
-}
-
-.calendar-nav-buttons {
-  display:flex;
   gap:8px;
 }
 
-.cal-nav-btn {
-  padding:4px 10px;
-  border-radius:999px;
-  border:1px solid rgba(0,0,0,0.15);
-  background:rgba(255,255,255,0.96);
+.nav-btn {
+  padding:6px 12px;
+  border-radius:10px;
+  border:1px solid var(--glass-border);
+  background:var(--card-bg);
   cursor:pointer;
-  font-size:12px;
 }
 
-body.dark .cal-nav-btn {
-  border-color:rgba(255,255,255,0.22);
-  background:rgba(25,25,40,0.96);
+#todayBtn {
+  margin-top:10px;
 }
 
 .calendar-grid {
+  margin-top:12px;
   display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:8px;
+  grid-template-columns:repeat(7, 1fr);
+  gap:6px;
 }
 
-/* 日セル：3行表示対応 */
+/* 日セル */
 .day-cell {
-  height:90px;
-  padding:6px 8px;
-  border-radius:18px;
-  border:1px solid rgba(0,0,0,0.08);
-  background:rgba(255,255,255,0.92);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  box-shadow:0 10px 24px rgba(0,0,0,0.18);
-  font-size:14px;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-  align-items:stretch;
-}
-
-body.dark .day-cell {
-  border-color:rgba(255,255,255,0.18);
-  background:rgba(15,15,30,0.9);
-}
-
-/* 上段：日付番号 */
-.day-number-row {
-  width:100%;
-  display:flex;
-  justify-content:flex-end;
-  font-size:12px;
-  margin-bottom:4px;
-  opacity:0.9;
-}
-
-.day-number {
-  font-weight:600;
-}
-
-/* 下段：予定プレビュー（最大3行） */
-.day-preview {
-  font-size:11px;
-  line-height:1.2;
-  white-space:pre-line;
+  height:110px;
+  padding:6px;
+  border-radius:12px;
+  background:var(--bg);
+  border:1px solid var(--glass-border);
+  position:relative;
   overflow:hidden;
+  font-size:12px;
+  cursor:pointer;
 }
 
-/* 今日 */
-.day-cell.today {
-  border-color:var(--accent);
+.day-cell-today {
+  border:2px solid var(--accent);
 }
 
-/* 選択中日付ハイライト */
 .day-cell.selected {
-  outline:2px solid var(--accent);
-  outline-offset:2px;
-  background:rgba(180,210,255,0.95);
+  outline:3px solid var(--accent);
+  outline-offset:1px;
 }
 
-body.dark .day-cell.selected {
-  background:rgba(40,60,110,0.95);
+/* 日付番号 */
+.day-number {
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+/* 予定行（最大3行） */
+.event-line {
+  font-size:11px;
+  padding:1px 4px;
+  border-radius:4px;
+  margin-top:2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  color:white;
 }
 
 /* ---------------------------------------------------
-   ToDoページ
+   ToDoページ（今は枠だけ・後で拡張可能）
 --------------------------------------------------- */
 #todoPage {
   display:none;
-  padding:24px;
   opacity:1;
+  padding:20px;
 }
 
-.todo-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:20px;
-  margin-bottom:16px;
-}
-
-#addTodoBtn {
-  padding:6px 14px;
-  border-radius:999px;
-  background:rgba(255,255,255,0.96);
-  border:1px solid rgba(0,0,0,0.14);
-  cursor:pointer;
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
-}
-
-body.dark #addTodoBtn {
-  border-color:rgba(255,255,255,0.22);
-  background:rgba(25,25,40,0.96);
-}
-
-.todo-list {
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.todo-item {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 12px;
-  border-radius:18px;
-  background:rgba(255,255,255,0.94);
-  border:1px solid rgba(0,0,0,0.10);
-  box-shadow:0 12px 26px rgba(0,0,0,0.22);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  cursor:grab;
-}
-
-body.dark .todo-item {
-  background:rgba(15,15,30,0.94);
-  border-color:rgba(255,255,255,0.20);
-  box-shadow:0 12px 26px rgba(0,0,0,0.55);
-}
-
-.todo-item input[type="text"] {
-  flex:1;
-  padding:6px 10px;
-  border-radius:999px;
-  border:1px solid rgba(0,0,0,0.18);
-  background:rgba(255,255,255,0.98);
-  color:var(--fg);
-}
-
-body.dark .todo-item input[type="text"] {
-  border-color:rgba(255,255,255,0.22);
-  background:rgba(10,10,22,0.98);
-}
-
-.todo-delete {
-  padding:6px 10px;
-  cursor:pointer;
-  border-radius:999px;
-  border:1px solid rgba(0,0,0,0.18);
-  background:rgba(255,240,240,0.98);
-  color:#c82828;
-}
-
-body.dark .todo-delete {
-  border-color:rgba(255,255,255,0.22);
-  background:rgba(60,20,20,0.98);
-}
-
-.todo-item:active {
-  cursor:grabbing;
-}
-
-/* ---------------------------------------------------
-   フェード
---------------------------------------------------- */
+/* フェード */
 .fade {
   transition:opacity 0.35s ease;
 }
@@ -619,24 +300,21 @@ body.dark .todo-delete {
 </head>
 
 <body>
-  <div class="gradient-bg"></div>
+<div class="gradient-bg"></div>
 
 <header>
-  <span id="headerMode">CALENDAR</span>
+  <button id="headerMode">CALENDAR</button>
 
-  <div class="tz-select-box">
+  <div style="display:flex;gap:8px;align-items:center;">
     <button id="tzButton">Tokyo</button>
-    <select id="tzSelect"></select>
+    <button id="modeToggle">Dark</button>
   </div>
-
-  <button id="modeToggle">Dark</button>
 </header>
 
 <main>
 
 <!-- ========== カレンダーページ ========== -->
 <div id="calendarPage" class="fade">
-
   <div class="shell">
 
     <!-- 左パネル -->
@@ -644,21 +322,13 @@ body.dark .todo-delete {
 
       <section class="today-hero">
         <div class="hero-time" id="heroTime">00:00</div>
-        <div class="hero-date" id="heroDate">2025/01/01 (Wed)</div>
+        <div class="hero-date" id="heroDate">2025/01/01</div>
       </section>
 
       <section class="today-notes">
         <div class="notes-header">
-          <div>Today's Schedule</div>
+          <strong id="selectedDateLabel">今日の予定</strong>
           <button id="addNoteBtn">＋</button>
-        </div>
-
-        <div class="day-nav">
-          <button id="prevDayBtn" class="day-nav-btn">← 前日</button>
-          <div class="day-nav-center">
-            <span id="selectedDateLabel" class="selected-date-label"></span>
-          </div>
-          <button id="nextDayBtn" class="day-nav-btn">翌日 →</button>
         </div>
 
         <div class="note-list" id="noteList"></div>
@@ -666,489 +336,330 @@ body.dark .todo-delete {
 
     </section>
 
-    <!-- 右パネル -->
+    <!-- 右：月カレンダー -->
     <section class="calendar-panel">
-
       <div class="calendar-header">
-        <div>
-          <div id="monthLabel" style="font-size:28px;font-weight:700;">2025年1月</div>
-          <div id="timezoneLabel" style="font-size:14px;">UTC+09 / Tokyo</div>
-        </div>
-
-        <div class="calendar-nav-buttons">
-          <button id="prevMonthBtn" class="cal-nav-btn">←</button>
-          <button id="todayBtn" class="cal-nav-btn">Today</button>
-          <button id="nextMonthBtn" class="cal-nav-btn">→</button>
-        </div>
+        <button class="nav-btn" id="prevMonth">←</button>
+        <div id="monthLabel" style="font-size:20px;font-weight:700;">2025年1月</div>
+        <button class="nav-btn" id="nextMonth">→</button>
       </div>
+
+      <button class="nav-btn" id="todayBtn">Today</button>
 
       <div class="calendar-grid" id="calendarGrid"></div>
     </section>
 
   </div>
-
 </div>
 
-<!-- ========== ToDoページ ========== -->
+<!-- ========== ToDoページ（仮） ========== -->
 <div id="todoPage" class="fade">
-  <div class="todo-header">
-    <span>ToDo List</span>
-    <button id="addTodoBtn">＋</button>
-  </div>
-
-  <div class="todo-list" id="todoList"></div>
+  <h2>ToDo List</h2>
+  <p>ここはあとで iOS 風 ToDo に拡張できるスペース。</p>
 </div>
 
 </main>
 
 <script>
 /* ============================================================
-   ストレージキー
+   イベント構造（Step1）
 ============================================================ */
-const STORAGE_NOTES = "notes_v1";   // 日付ごとのオブジェクト
-const STORAGE_TODO  = "todo_v1";
-const STORAGE_TZ    = "timezone_v1";
+function createEvent() {
+  return {
+    id: crypto.randomUUID(),
+    title: "",
+    location: { name: "", lat: null, lng: null },
+    notes: "",
+    color: "#3478F6",
+    allDay: false,
+    start: "",   // "YYYY-MM-DD"
+    end: ""      // 今回は使わない（拡張用）
+  };
+}
+
+function loadEvents() {
+  return JSON.parse(localStorage.getItem("events") || "[]");
+}
+
+function saveEvents(arr) {
+  localStorage.setItem("events", JSON.stringify(arr));
+}
 
 /* ============================================================
-   日付ユーティリティ
+   カレンダー状態
 ============================================================ */
-function dateToKey(d) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const day = String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${day}`;
-}
-function keyToDate(key) {
-  const [y,m,d] = key.split("-").map(Number);
-  return new Date(y, m-1, d);
-}
-function formatDateJP(key) {
-  const d = keyToDate(key);
-  const weekdays = ["日","月","火","水","木","金","土"];
-  const w = weekdays[d.getDay()];
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const dd = String(d.getDate()).padStart(2,"0");
-  return `${y}/${m}/${dd} (${w})`;
-}
-
-/* 今日 / 選択中 / カレンダー表示中の年月 */
-const todayDate = new Date();
-let selectedDateKey = dateToKey(todayDate);
-let currentYear = todayDate.getFullYear();
-let currentMonth = todayDate.getMonth(); // 0-11
+let viewYear  = new Date().getFullYear();
+let viewMonth = new Date().getMonth();        // 0〜11
+let selectedDate = new Date().toISOString().slice(0,10); // "YYYY-MM-DD"
 
 /* ============================================================
-   今日の予定（保存 / 削除 / Googleマップ連携）
+   月カレンダー描画（1マス3行）
 ============================================================ */
-const noteList = document.getElementById("noteList");
-const addNoteBtn = document.getElementById("addNoteBtn");
-const selectedDateLabel = document.getElementById("selectedDateLabel");
+function renderCalendar() {
+  const grid = document.getElementById("calendarGrid");
+  const monthLabel = document.getElementById("monthLabel");
 
-function loadAllNotes() {
-  try {
-    const raw = localStorage.getItem(STORAGE_NOTES);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      return parsed;
+  grid.innerHTML = "";
+  monthLabel.textContent = `${viewYear}年${viewMonth + 1}月`;
+
+  const first = new Date(viewYear, viewMonth, 1);
+  const last  = new Date(viewYear, viewMonth + 1, 0);
+
+  const events = loadEvents();
+  const todayStr = new Date().toISOString().slice(0,10);
+
+  // 前の月の空白
+  for (let i = 0; i < first.getDay(); i++) {
+    const blank = document.createElement("div");
+    blank.className = "day-cell";
+    blank.style.visibility = "hidden";
+    grid.appendChild(blank);
+  }
+
+  // 当月の日
+  for (let d = 1; d <= last.getDate(); d++) {
+    const dateStr = `${viewYear}-${String(viewMonth+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const dayEvents = events.filter(ev => ev.start === dateStr);
+
+    const cell = document.createElement("div");
+    cell.className = "day-cell";
+
+    // 今日枠
+    if (dateStr === todayStr) {
+      cell.classList.add("day-cell-today");
     }
-    return {};
-  } catch(e) {
-    return {};
+    // 選択中枠
+    if (dateStr === selectedDate) {
+      cell.classList.add("selected");
+    }
+
+    // 日付番号
+    const num = document.createElement("div");
+    num.className = "day-number";
+    num.textContent = d;
+    cell.appendChild(num);
+
+    // 最大3行まで予定表示
+    dayEvents.slice(0,3).forEach(ev => {
+      const line = document.createElement("div");
+      line.className = "event-line";
+      line.style.background = ev.color || "#3478F6";
+      line.textContent = ev.title || "(無題)";
+      cell.appendChild(line);
+    });
+
+    // 4件以上ある場合は「+N件」
+    if (dayEvents.length > 3) {
+      const more = document.createElement("div");
+      more.className = "event-line";
+      more.style.background = "rgba(0,0,0,0.4)";
+      more.textContent = `+${dayEvents.length - 3}件`;
+      cell.appendChild(more);
+    }
+
+    // クリックで選択日変更
+    cell.addEventListener("click", () => {
+      selectedDate = dateStr;
+      renderCalendar();
+      renderSelectedDay();
+    });
+
+    grid.appendChild(cell);
   }
 }
-function saveAllNotes(obj) {
-  localStorage.setItem(STORAGE_NOTES, JSON.stringify(obj));
-}
-function loadNotesFor(dateKey) {
-  const all = loadAllNotes();
-  return Array.isArray(all[dateKey]) ? all[dateKey] : [];
-}
-function saveNotesFor(dateKey, arr) {
-  const all = loadAllNotes();
-  all[dateKey] = arr;
-  saveAllNotes(all);
-}
 
-function updateSelectedDateLabel() {
-  selectedDateLabel.textContent = formatDateJP(selectedDateKey);
-}
+/* ============================================================
+   左側：選択中の日の予定を表示・編集
+============================================================ */
+function renderSelectedDay() {
+  const list = document.getElementById("noteList");
+  const label = document.getElementById("selectedDateLabel");
+  label.textContent = `${selectedDate} の予定`;
 
-function renderNotes() {
-  const notes = loadNotesFor(selectedDateKey);
-  noteList.innerHTML = "";
+  const events = loadEvents().filter(ev => ev.start === selectedDate);
+  list.innerHTML = "";
 
-  notes.forEach((note, index) => {
+  events.forEach(ev => {
     const card = document.createElement("div");
     card.className = "note-card";
 
     card.innerHTML = `
       <div class="note-row">
-        <input type="time" class="note-time" value="${note.time || ""}">
-        <input type="text" class="note-title" placeholder="Title" value="${note.title || ""}">
+        <input type="text" value="${ev.title}" placeholder="タイトル">
       </div>
       <div class="note-row">
-        <input type="text" class="note-place" placeholder="Place" value="${note.place || ""}">
-        <button class="note-map">地図</button>
-        <button class="note-delete">削除</button>
+        <input type="color" value="${ev.color}">
       </div>
+      <div class="note-row">
+        <input type="text" value="${ev.location.name}" placeholder="場所">
+        <button type="button" class="map-open">地図</button>
+      </div>
+      <button class="note-delete">削除</button>
     `;
 
-    const timeInput  = card.querySelector(".note-time");
-    const titleInput = card.querySelector(".note-title");
-    const placeInput = card.querySelector(".note-place");
-    const mapBtn     = card.querySelector(".note-map");
+    const titleInput = card.querySelector("input[type='text']");
+    const colorInput = card.querySelector("input[type='color']");
+    const placeInput = card.querySelectorAll("input[type='text']")[1];
+    const mapBtn     = card.querySelector(".map-open");
     const delBtn     = card.querySelector(".note-delete");
 
-    function sync() {
-      const updated = loadNotesFor(selectedDateKey);
-      if (!updated[index]) updated[index] = {time:"",title:"",place:""};
-      updated[index].time  = timeInput.value;
-      updated[index].title = titleInput.value;
-      updated[index].place = placeInput.value;
-      saveNotesFor(selectedDateKey, updated);
-      renderCalendar();  // カレンダーの3行プレビュー更新
-    }
-
-    [timeInput, titleInput, placeInput].forEach(input => {
-      input.addEventListener("input", sync);
+    // タイトル編集 → 保存
+    titleInput.addEventListener("input", e => {
+      ev.title = e.target.value;
+      saveUpdate(ev);
     });
 
+    // 色変更 → 保存
+    colorInput.addEventListener("input", e => {
+      ev.color = e.target.value;
+      saveUpdate(ev);
+    });
+
+    // 場所編集 → 保存
+    placeInput.addEventListener("input", e => {
+      ev.location.name = e.target.value;
+      saveUpdate(ev);
+    });
+
+    // 地図ボタン → Googleマップ検索
     mapBtn.addEventListener("click", () => {
-      const q = placeInput.value.trim();
+      const q = ev.location.name.trim();
       if (!q) return;
       const url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
       window.open(url, "_blank");
     });
 
+    // 削除
     delBtn.addEventListener("click", () => {
-      const updated = loadNotesFor(selectedDateKey);
-      updated.splice(index, 1);
-      saveNotesFor(selectedDateKey, updated);
-      renderNotes();
-      renderCalendar();
+      removeEvent(ev.id);
     });
 
-    noteList.appendChild(card);
+    list.appendChild(card);
   });
-
-  updateSelectedDateLabel();
 }
 
-/* 予定追加（選択中の日付に追加） */
-addNoteBtn.addEventListener("click", () => {
-  const notes = loadNotesFor(selectedDateKey);
-  notes.push({ time:"", place:"", title:"" });
-  saveNotesFor(selectedDateKey, notes);
-  renderNotes();
-  renderCalendar();
-});
-
-/* ============================================================
-   カレンダー表示 ＋ 選択中日付ハイライト ＋ 月移動
-============================================================ */
-const calendarGrid = document.getElementById("calendarGrid");
-const monthLabel   = document.getElementById("monthLabel");
-const prevMonthBtn = document.getElementById("prevMonthBtn");
-const nextMonthBtn = document.getElementById("nextMonthBtn");
-const todayBtn     = document.getElementById("todayBtn");
-
-function renderCalendar() {
-  const first = new Date(currentYear, currentMonth, 1);
-  const last  = new Date(currentYear, currentMonth + 1, 0);
-
-  monthLabel.textContent = `${currentYear}年${currentMonth + 1}月`;
-  calendarGrid.innerHTML = "";
-
-  const todayKey = dateToKey(todayDate);
-
-  // 先頭の空白
-  for (let i = 0; i < first.getDay(); i++) {
-    const blank = document.createElement("div");
-    blank.className = "day-cell";
-    blank.style.visibility = "hidden";
-    calendarGrid.appendChild(blank);
-  }
-
-  // 各日
-  for (let d = 1; d <= last.getDate(); d++) {
-    const cellDate = new Date(currentYear, currentMonth, d);
-    const cellKey  = dateToKey(cellDate);
-
-    const cell = document.createElement("div");
-    cell.className = "day-cell";
-    cell.dataset.dateKey = cellKey;
-
-    if (cellKey === todayKey) {
-      cell.classList.add("today");
-    }
-    if (cellKey === selectedDateKey) {
-      cell.classList.add("selected");
-    }
-
-    // 上段：日付
-    const header = document.createElement("div");
-    header.className = "day-number-row";
-    header.innerHTML = `<span class="day-number">${d}</span>`;
-
-    // 下段：予定3行まで
-    const preview = document.createElement("div");
-    preview.className = "day-preview";
-
-    const notes = loadNotesFor(cellKey);
-    const lines = [];
-    notes.forEach(n => {
-      if (!n) return;
-      const parts = [];
-      if (n.time)  parts.push(n.time);
-      if (n.title) parts.push(n.title);
-      else if (n.place) parts.push(n.place);
-      const line = parts.join(" ");
-      if (line.trim()) lines.push(line);
-    });
-    if (lines.length > 3) lines.length = 3;  // 最大3行
-    preview.textContent = lines.join("\n");
-
-    cell.appendChild(header);
-    cell.appendChild(preview);
-
-    cell.addEventListener("click", () => {
-      selectedDateKey = cellKey;
-      renderNotes();
-      renderCalendar();
-    });
-
-    calendarGrid.appendChild(cell);
+/* イベント更新共通処理 */
+function saveUpdate(ev) {
+  const all = loadEvents();
+  const idx = all.findIndex(x => x.id === ev.id);
+  if (idx !== -1) {
+    all[idx] = ev;
+    saveEvents(all);
+    renderCalendar();
   }
 }
 
-/* 月移動：C仕様（選択中の日の「日」番号を維持） */
-function moveMonth(offset) {
-  const d = keyToDate(selectedDateKey);
-  d.setMonth(d.getMonth() + offset);
-  selectedDateKey = dateToKey(d);
-  currentYear  = d.getFullYear();
-  currentMonth = d.getMonth();
-  renderNotes();
+/* 削除処理 */
+function removeEvent(id) {
+  const all = loadEvents().filter(ev => ev.id !== id);
+  saveEvents(all);
+  renderSelectedDay();
   renderCalendar();
 }
 
-prevMonthBtn.addEventListener("click", () => moveMonth(-1));
-nextMonthBtn.addEventListener("click", () => moveMonth(1));
-
-todayBtn.addEventListener("click", () => {
-  const d = new Date();
-  selectedDateKey = dateToKey(d);
-  currentYear  = d.getFullYear();
-  currentMonth = d.getMonth();
-  renderNotes();
+/* 追加ボタン：選択中の日に1件追加 */
+document.getElementById("addNoteBtn").addEventListener("click", () => {
+  const ev = createEvent();
+  ev.start = selectedDate;
+  const all = loadEvents();
+  all.push(ev);
+  saveEvents(all);
+  renderSelectedDay();
   renderCalendar();
 });
 
 /* ============================================================
-   日付ナビ（前日 / 翌日）
+   月移動 / Today
 ============================================================ */
-const prevDayBtn = document.getElementById("prevDayBtn");
-const nextDayBtn = document.getElementById("nextDayBtn");
-
-prevDayBtn.addEventListener("click", () => {
-  const d = keyToDate(selectedDateKey);
-  d.setDate(d.getDate() - 1);
-  selectedDateKey = dateToKey(d);
-  currentYear  = d.getFullYear();
-  currentMonth = d.getMonth();
-  renderNotes();
+document.getElementById("prevMonth").addEventListener("click", () => {
+  viewMonth--;
+  if (viewMonth < 0) {
+    viewMonth = 11;
+    viewYear--;
+  }
   renderCalendar();
 });
 
-nextDayBtn.addEventListener("click", () => {
-  const d = keyToDate(selectedDateKey);
-  d.setDate(d.getDate() + 1);
-  selectedDateKey = dateToKey(d);
-  currentYear  = d.getFullYear();
-  currentMonth = d.getMonth();
-  renderNotes();
+document.getElementById("nextMonth").addEventListener("click", () => {
+  viewMonth++;
+  if (viewMonth > 11) {
+    viewMonth = 0;
+    viewYear++;
+  }
   renderCalendar();
 });
 
-/* ============================================================
-   タイムゾーン一覧（400エリア）＋ 時刻表示
-============================================================ */
-const tzSelect       = document.getElementById("tzSelect");
-const tzButton       = document.getElementById("tzButton");
-const timezoneLabel  = document.getElementById("timezoneLabel");
-const heroTime       = document.getElementById("heroTime");
-const heroDate       = document.getElementById("heroDate");
-
-Intl.supportedValuesOf("timeZone").forEach(tz => {
-  const op = document.createElement("option");
-  op.value = tz;
-  op.textContent = tz;
-  tzSelect.appendChild(op);
-});
-
-function updateTime() {
-  const tz = localStorage.getItem(STORAGE_TZ) || "Asia/Tokyo";
-  tzSelect.value = tz;
-
+document.getElementById("todayBtn").addEventListener("click", () => {
   const now = new Date();
-
-  heroTime.textContent = now.toLocaleTimeString("ja-JP", {
-    hour:"2-digit", minute:"2-digit", timeZone:tz
-  });
-
-  heroDate.textContent = now.toLocaleDateString("ja-JP", {
-    year:"numeric", month:"2-digit", day:"2-digit", weekday:"short", timeZone:tz
-  });
-
-  tzButton.textContent = tz.split("/")[1] || tz;
-  timezoneLabel.textContent = tz;
-}
-
-tzSelect.addEventListener("change", () => {
-  localStorage.setItem(STORAGE_TZ, tzSelect.value);
-  updateTime();
+  viewYear = now.getFullYear();
+  viewMonth = now.getMonth();
+  selectedDate = now.toISOString().slice(0,10);
+  renderCalendar();
+  renderSelectedDay();
 });
 
-updateTime();
-setInterval(updateTime, 30000);
-
 /* ============================================================
-   ダークモード（ボタン表示も同期）
+   ダークモード切替（テキストも更新）
 ============================================================ */
 const modeToggle = document.getElementById("modeToggle");
-
-function updateModeButtonLabel() {
-  if (document.body.classList.contains("dark")) {
-    modeToggle.textContent = "Light";
-  } else {
-    modeToggle.textContent = "Dark";
-  }
-}
-
 modeToggle.addEventListener("click", () => {
-  document.body.classList.toggle("dark");
-  updateModeButtonLabel();
+  const isDark = document.body.classList.toggle("dark");
+  modeToggle.textContent = isDark ? "Light" : "Dark";
 });
 
-updateModeButtonLabel();
-
 /* ============================================================
-   カレンダー / ToDo 切り替え（フェード）
+   CALENDAR / TODO 切り替え（フェード）
 ============================================================ */
-const headerMode   = document.getElementById("headerMode");
+const headerMode = document.getElementById("headerMode");
 const calendarPage = document.getElementById("calendarPage");
-const todoPage     = document.getElementById("todoPage");
+const todoPage = document.getElementById("todoPage");
 
-function fadeOut(elem, cb) {
-  elem.style.opacity = "0";
-  elem.addEventListener("transitionend", function handler() {
-    elem.removeEventListener("transitionend", handler);
-    elem.style.display = "none";
-    cb();
-  });
-}
-
-function fadeIn(elem) {
-  elem.style.display = "block";
-  elem.style.opacity = "0";
-  requestAnimationFrame(() => {
-    elem.style.opacity = "1";
-  });
+function showPage(pageToShow) {
+  if (pageToShow === "calendar") {
+    calendarPage.style.display = "block";
+    todoPage.style.display = "none";
+    calendarPage.style.opacity = "1";
+  } else {
+    calendarPage.style.display = "none";
+    todoPage.style.display = "block";
+    todoPage.style.opacity = "1";
+  }
 }
 
 headerMode.addEventListener("click", () => {
   if (headerMode.textContent === "CALENDAR") {
     headerMode.textContent = "TODO";
-    fadeOut(calendarPage, () => {
-      fadeIn(todoPage);
-    });
+    calendarPage.style.opacity = "0";
+    setTimeout(() => showPage("todo"), 350);
   } else {
     headerMode.textContent = "CALENDAR";
-    fadeOut(todoPage, () => {
-      fadeIn(calendarPage);
-    });
+    todoPage.style.opacity = "0";
+    setTimeout(() => showPage("calendar"), 350);
   }
 });
 
 /* ============================================================
-   ToDo：保存・チェック・削除・並び替え
+   時刻表示（Tokyo固定・あとでタイムゾーンに拡張可）
 ============================================================ */
-const todoList   = document.getElementById("todoList");
-const addTodoBtn = document.getElementById("addTodoBtn");
-
-function loadTodo() {
-  return JSON.parse(localStorage.getItem(STORAGE_TODO) || "[]");
+function updateNow() {
+  const now = new Date();
+  document.getElementById("heroTime").textContent =
+    now.toLocaleTimeString("ja-JP", { hour:"2-digit", minute:"2-digit" });
+  document.getElementById("heroDate").textContent =
+    now.toLocaleDateString("ja-JP", {
+      year:"numeric", month:"2-digit", day:"2-digit", weekday:"short"
+    });
 }
-function saveTodo(arr) {
-  localStorage.setItem(STORAGE_TODO, JSON.stringify(arr));
-}
+updateNow();
+setInterval(updateNow, 30000);
 
-function renderTodo() {
-  const todos = loadTodo();
-  todoList.innerHTML = "";
-
-  todos.forEach((item, index) => {
-    const div = document.createElement("div");
-    div.className = "todo-item";
-    div.setAttribute("draggable","true");
-
-    div.innerHTML = `
-      <input type="checkbox" ${item.done ? "checked":""}>
-      <input type="text" value="${item.text}">
-      <button class="todo-delete">✕</button>
-    `;
-
-    div.querySelector("input[type='checkbox']").addEventListener("change", e => {
-      todos[index].done = e.target.checked;
-      saveTodo(todos);
-    });
-
-    div.querySelector("input[type='text']").addEventListener("input", e => {
-      todos[index].text = e.target.value;
-      saveTodo(todos);
-    });
-
-    div.querySelector(".todo-delete").addEventListener("click", () => {
-      todos.splice(index,1);
-      saveTodo(todos);
-      renderTodo();
-    });
-
-    div.addEventListener("dragstart", e => {
-      e.dataTransfer.setData("text/plain", index);
-    });
-
-    div.addEventListener("dragover", e => {
-      e.preventDefault();
-    });
-
-    div.addEventListener("drop", e => {
-      const from = Number(e.dataTransfer.getData("text/plain"));
-      const to   = index;
-      const moved = todos.splice(from,1)[0];
-      todos.splice(to,0,moved);
-      saveTodo(todos);
-      renderTodo();
-    });
-
-    todoList.appendChild(div);
-  });
-}
-
-addTodoBtn.addEventListener("click", () => {
-  const todos = loadTodo();
-  todos.push({ text:"", done:false });
-  saveTodo(todos);
-  renderTodo();
-});
-
-/* 初期描画 */
-renderTodo();
-renderNotes();
+/* ============================================================
+   初期描画
+============================================================ */
 renderCalendar();
+renderSelectedDay();
 </script>
 
 </body>
 </html>
+
