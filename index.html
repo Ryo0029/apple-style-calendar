@@ -547,7 +547,32 @@
     let currentMonth = today.getMonth();
 
     const notes = {};
-    let selectedKey = null;
+let selectedKey = null;
+
+const STORAGE_KEY = "calendar_notes_v1";
+
+function loadNotesFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") {
+      Object.assign(notes, parsed);
+    }
+  } catch (e) {
+    console.warn("load error", e);
+  }
+}
+
+function saveNotesToStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+  } catch (e) {
+    console.warn("save error", e);
+  }
+}
+loadNotesFromStorage();
+
 
     const monthNames = [
       "1月","2月","3月","4月","5月","6月",
@@ -701,6 +726,7 @@
       if (!selectedKey) return;
       const value = noteTextarea.value;
       notes[selectedKey] = value;
+       saveNotesToStorage(); 
       noteEmptyLabel.textContent = value.trim()
         ? "入力済みの予定があります。"
         : "ここに予定を書き込めます。";
