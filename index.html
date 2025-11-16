@@ -186,12 +186,11 @@ body.dark #tzSelect {
 }
 
 /* ---------------------------------------------------
-   レイアウト（ドラッグで入れ替え可能）
-   layout-item が 3つ（hero / notes / calendar）
+   レイアウト
 --------------------------------------------------- */
 .shell {
   display:grid;
-  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  grid-template-columns:38% 62%;
   gap:24px;
   padding:24px;
   max-width:1500px;
@@ -204,38 +203,16 @@ body.dark #tzSelect {
   }
 }
 
-.layout-item {
-  min-height: 0;
-  cursor: grab;
-
-  /* 追加：自由リサイズ可能にする */
-  resize: both;
-  overflow: auto;
-  min-width: 220px;
-}
-
-.layout-item > * {
-  max-width: 100%;
-}
-
-.layout-item:active {
-  cursor:grabbing;
-}
-
-/* カレンダーブロックはデフォルトで横に広く */
-.layout-item[data-block-id="calendar"] {
-  grid-column: span 2;
-}
-
-@media (max-width: 900px) {
-  .layout-item[data-block-id="calendar"] {
-    grid-column: span 1;
-  }
-}
-
 /* ---------------------------------------------------
-   今日の時刻カード
+   左パネル（今日）
 --------------------------------------------------- */
+.left-panel {
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+}
+
+/* 今日の時刻カード */
 .today-hero {
   padding:32px;
   text-align:center;
@@ -660,19 +637,16 @@ body.dark .todo-delete {
 <!-- ========== カレンダーページ ========== -->
 <div id="calendarPage" class="fade">
 
-  <!-- ドラッグで並べ替えできる 3 ブロック -->
-  <div class="shell" id="layoutRoot">
+  <div class="shell">
 
-    <!-- ブロック1：今日の時間 -->
-    <div class="layout-item" data-block-id="hero" draggable="true">
+    <!-- 左パネル -->
+    <section class="left-panel">
+
       <section class="today-hero">
         <div class="hero-time" id="heroTime">00:00</div>
         <div class="hero-date" id="heroDate">2025/01/01 (Wed)</div>
       </section>
-    </div>
 
-    <!-- ブロック2：今日の予定 -->
-    <div class="layout-item" data-block-id="notes" draggable="true">
       <section class="today-notes">
         <div class="notes-header">
           <div>Today's Schedule</div>
@@ -689,28 +663,27 @@ body.dark .todo-delete {
 
         <div class="note-list" id="noteList"></div>
       </section>
-    </div>
 
-    <!-- ブロック3：月カレンダー -->
-    <div class="layout-item" data-block-id="calendar" draggable="true">
-      <section class="calendar-panel">
+    </section>
 
-        <div class="calendar-header">
-          <div>
-            <div id="monthLabel" style="font-size:28px;font-weight:700;">2025年1月</div>
-            <div id="timezoneLabel" style="font-size:14px;">UTC+09 / Tokyo</div>
-          </div>
+    <!-- 右パネル -->
+    <section class="calendar-panel">
 
-          <div class="calendar-nav-buttons">
-            <button id="prevMonthBtn" class="cal-nav-btn">←</button>
-            <button id="todayBtn" class="cal-nav-btn">Today</button>
-            <button id="nextMonthBtn" class="cal-nav-btn">→</button>
-          </div>
+      <div class="calendar-header">
+        <div>
+          <div id="monthLabel" style="font-size:28px;font-weight:700;">2025年1月</div>
+          <div id="timezoneLabel" style="font-size:14px;">UTC+09 / Tokyo</div>
         </div>
 
-        <div class="calendar-grid" id="calendarGrid"></div>
-      </section>
-    </div>
+        <div class="calendar-nav-buttons">
+          <button id="prevMonthBtn" class="cal-nav-btn">←</button>
+          <button id="todayBtn" class="cal-nav-btn">Today</button>
+          <button id="nextMonthBtn" class="cal-nav-btn">→</button>
+        </div>
+      </div>
+
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </section>
 
   </div>
 
@@ -732,84 +705,9 @@ body.dark .todo-delete {
 /* ============================================================
    ストレージキー
 ============================================================ */
-const STORAGE_NOTES   = "notes_v1";   // 日付ごとのオブジェクト
-const STORAGE_TODO    = "todo_v1";
-const STORAGE_TZ      = "timezone_v1";
-const STORAGE_LAYOUT  = "layout_order_v1";
-
-/* ============================================================
-   レイアウトドラッグ＆ドロップ
-   hero / notes / calendar を自由に並べ替え
-============================================================ */
-const layoutRoot = document.getElementById("layoutRoot");
-
-function getDefaultLayoutOrder() {
-  return ["hero","notes","calendar"];
-}
-
-function loadLayoutOrder() {
-  try {
-    const raw = localStorage.getItem(STORAGE_LAYOUT);
-    if (!raw) return getDefaultLayoutOrder();
-    const arr = JSON.parse(raw);
-    if (!Array.isArray(arr)) return getDefaultLayoutOrder();
-    return arr;
-  } catch(e) {
-    return getDefaultLayoutOrder();
-  }
-}
-
-function saveLayoutOrder(order) {
-  localStorage.setItem(STORAGE_LAYOUT, JSON.stringify(order));
-}
-
-function applyLayout(order) {
-  order.forEach(id => {
-    const item = layoutRoot.querySelector(`.layout-item[data-block-id="${id}"]`);
-    if (item) layoutRoot.appendChild(item);
-  });
-}
-
-function setupDragLayout() {
-  const items = Array.from(layoutRoot.querySelectorAll(".layout-item"));
-  let dragId = null;
-
-  items.forEach(item => {
-    item.addEventListener("dragstart", e => {
-      dragId = item.dataset.blockId;
-      e.dataTransfer.effectAllowed = "move";
-    });
-
-    item.addEventListener("dragover", e => {
-      e.preventDefault();
-    });
-
-    item.addEventListener("drop", e => {
-      e.preventDefault();
-      const targetId = item.dataset.blockId;
-      if (!dragId || dragId === targetId) return;
-
-      const currentOrder = Array.from(
-        layoutRoot.querySelectorAll(".layout-item")
-      ).map(el => el.dataset.blockId);
-
-      const from = currentOrder.indexOf(dragId);
-      const to   = currentOrder.indexOf(targetId);
-      if (from === -1 || to === -1) return;
-
-      const moved = currentOrder.splice(from,1)[0];
-      currentOrder.splice(to,0,moved);
-
-      saveLayoutOrder(currentOrder);
-      applyLayout(currentOrder);
-    });
-  });
-
-  const storedOrder = loadLayoutOrder();
-  applyLayout(storedOrder);
-}
-
-setupDragLayout();
+const STORAGE_NOTES = "notes_v1";   // 日付ごとのオブジェクト
+const STORAGE_TODO  = "todo_v1";
+const STORAGE_TZ    = "timezone_v1";
 
 /* ============================================================
    日付ユーティリティ
@@ -910,7 +808,7 @@ function renderNotes() {
       updated[index].title = titleInput.value;
       updated[index].place = placeInput.value;
       saveNotesFor(selectedDateKey, updated);
-      renderCalendar();
+      renderCalendar();  // カレンダーの3行プレビュー更新
     }
 
     [timeInput, titleInput, placeInput].forEach(input => {
@@ -938,6 +836,7 @@ function renderNotes() {
   updateSelectedDateLabel();
 }
 
+/* 予定追加（選択中の日付に追加） */
 addNoteBtn.addEventListener("click", () => {
   const notes = loadNotesFor(selectedDateKey);
   notes.push({ time:"", place:"", title:"" });
@@ -964,6 +863,7 @@ function renderCalendar() {
 
   const todayKey = dateToKey(todayDate);
 
+  // 先頭の空白
   for (let i = 0; i < first.getDay(); i++) {
     const blank = document.createElement("div");
     blank.className = "day-cell";
@@ -971,6 +871,7 @@ function renderCalendar() {
     calendarGrid.appendChild(blank);
   }
 
+  // 各日
   for (let d = 1; d <= last.getDate(); d++) {
     const cellDate = new Date(currentYear, currentMonth, d);
     const cellKey  = dateToKey(cellDate);
@@ -986,10 +887,12 @@ function renderCalendar() {
       cell.classList.add("selected");
     }
 
+    // 上段：日付
     const header = document.createElement("div");
     header.className = "day-number-row";
     header.innerHTML = `<span class="day-number">${d}</span>`;
 
+    // 下段：予定3行まで
     const preview = document.createElement("div");
     preview.className = "day-preview";
 
@@ -1004,7 +907,7 @@ function renderCalendar() {
       const line = parts.join(" ");
       if (line.trim()) lines.push(line);
     });
-    if (lines.length > 3) lines.length = 3;
+    if (lines.length > 3) lines.length = 3;  // 最大3行
     preview.textContent = lines.join("\n");
 
     cell.appendChild(header);
@@ -1020,6 +923,7 @@ function renderCalendar() {
   }
 }
 
+/* 月移動：C仕様（選択中の日の「日」番号を維持） */
 function moveMonth(offset) {
   const d = keyToDate(selectedDateKey);
   d.setMonth(d.getMonth() + offset);
